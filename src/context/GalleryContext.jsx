@@ -750,6 +750,82 @@ export function GalleryProvider({ children }) {
     setIndividualOffsets({})
   }, [])
 
+  // ===== DUPLICATE FRAME =====
+  const duplicateFrame = useCallback((frameIdx) => {
+    if (!selectedLayout?.frames || frameIdx < 0 || frameIdx >= selectedLayout.frames.length) return
+    
+    // Get the frame to duplicate
+    const frameToClone = selectedLayout.frames[frameIdx]
+    const artworkToClone = selectedArtworks[frameIdx]
+    const sizeToClone = perFrameSizes[frameIdx] || printSize
+    const offsetToClone = individualOffsets[frameIdx] || { x: 0, y: 0 }
+    
+    // Find all frames that share the same base position (same layout position)
+    // These are frames that were duplicated from the same source
+    const samePositionFrames = selectedLayout.frames
+      .map((frame, idx) => ({
+        frame,
+        idx,
+        offset: individualOffsets[idx] || { x: 0, y: 0 }
+      }))
+      .filter(item => 
+        item.frame.left === frameToClone.left && 
+        item.frame.top === frameToClone.top
+      )
+    
+    // Find the rightmost frame among those with the same base position
+    const rightmostOffset = Math.max(...samePositionFrames.map(item => item.offset.x))
+    
+    // Calculate the new offset position
+    const frameWidthOffset = 240 // Frame width + gap (increased for better spacing)
+    const newXOffset = rightmostOffset + frameWidthOffset
+    
+    // Check if the new frame would go off-screen (canvas is roughly 1400px wide, frames are ~180px)
+    // Keep a 200px margin from the right edge
+    const maxOffset = 1000 // Maximum safe x-offset to keep frames visible
+    if (newXOffset > maxOffset) {
+      alert('Cannot add more frames - they would go off screen. Please rearrange existing frames or use a different layout.')
+      return
+    }
+    
+    // Create a new frame with the SAME position as the original (keep identical layout position)
+    const newFrame = {
+      ...frameToClone,
+      // Keep the same position - we'll offset it using individualOffsets
+    }
+    
+    // Update the layout with the new frame
+    const newFrames = [...selectedLayout.frames, newFrame]
+    const updatedLayout = {
+      ...selectedLayout,
+      frames: newFrames,
+      frameCount: newFrames.length,
+      name: selectedLayout.name // Keep original name
+    }
+    setSelectedLayout(updatedLayout)
+    
+    // Update per-frame sizes
+    setPerFrameSizes(prev => [...prev, sizeToClone])
+    
+    // Copy the artwork to the new frame
+    if (artworkToClone) {
+      const newIdx = newFrames.length - 1
+      setSelectedArtworks(prev => ({
+        ...prev,
+        [newIdx]: { ...artworkToClone }
+      }))
+    }
+    
+    // Position the new frame to the right of the rightmost frame with same base position
+    setIndividualOffsets(prev => ({
+      ...prev,
+      [newFrames.length - 1]: { x: newXOffset, y: offsetToClone.y }
+    }))
+    
+    // Set the new frame as active
+    setActiveFrameIndex(newFrames.length - 1)
+  }, [selectedLayout, selectedArtworks, perFrameSizes, printSize, individualOffsets])
+
   // Add global event listeners for drag
   useEffect(() => {
     if (isDragging) {
@@ -1016,6 +1092,7 @@ export function GalleryProvider({ children }) {
     individualOffsets, activeDragFrameIdx, individualDragLive,
     handleIndividualDragStart,
     resetPositions,
+    duplicateFrame,
     // Handlers
     handleQuantityChange,
     handleAddToCart,

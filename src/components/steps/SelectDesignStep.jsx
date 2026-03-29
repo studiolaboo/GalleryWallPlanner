@@ -197,7 +197,6 @@ const PRINT_SIZES = {
   const handleClearFilters = () => {
     setSearchQuery('')
     setSelectedColorFilters([])
-    setSelectedOrientationFilters([])
     setSelectedStyleFilters([])
     setSelectedCollectionFilters([])
     setSelectedArtistFilters([])
@@ -210,14 +209,6 @@ const PRINT_SIZES = {
       setSelectedColorFilters([])
     } else {
       setSelectedColorFilters([val])
-    }
-  }
-
-  const handleOrientationDropdown = (val) => {
-    if (val === 'All') {
-      setSelectedOrientationFilters([])
-    } else {
-      setSelectedOrientationFilters([val])
     }
   }
 

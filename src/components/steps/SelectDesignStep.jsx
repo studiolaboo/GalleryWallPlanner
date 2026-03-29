@@ -5,6 +5,7 @@ import {
   styleOptions,
   categoryOptions,
   artistOptions,
+  roomOptions,
   backgroundOptions,
 } from '../../data'
 import { TopNavBar, Breadcrumb, MobileBottomNav, MobileMenuModal, ResetModal } from '../layout'
@@ -55,6 +56,7 @@ const PRINT_SIZES = {
     selectedStyleFilters, setSelectedStyleFilters,
     selectedCollectionFilters, setSelectedCollectionFilters,
     selectedArtistFilters, setSelectedArtistFilters,
+    selectedRoomFilters, setSelectedRoomFilters,
     toggleFilter,
     getArtworksForFrameSize,
     showCart, setShowCart,
@@ -195,9 +197,11 @@ const PRINT_SIZES = {
   const handleClearFilters = () => {
     setSearchQuery('')
     setSelectedColorFilters([])
+    setSelectedOrientationFilters([])
     setSelectedStyleFilters([])
     setSelectedCollectionFilters([])
     setSelectedArtistFilters([])
+    setSelectedRoomFilters([])
   }
 
   // Handle single-select filter dropdown changes
@@ -206,6 +210,14 @@ const PRINT_SIZES = {
       setSelectedColorFilters([])
     } else {
       setSelectedColorFilters([val])
+    }
+  }
+
+  const handleOrientationDropdown = (val) => {
+    if (val === 'All') {
+      setSelectedOrientationFilters([])
+    } else {
+      setSelectedOrientationFilters([val])
     }
   }
 
@@ -222,6 +234,14 @@ const PRINT_SIZES = {
       setSelectedStyleFilters([])
     } else {
       setSelectedStyleFilters([val])
+    }
+  }
+
+  const handleRoomDropdown = (val) => {
+    if (val === 'All') {
+      setSelectedRoomFilters([])
+    } else {
+      setSelectedRoomFilters([val])
     }
   }
 
@@ -279,26 +299,14 @@ const PRINT_SIZES = {
                 )}
               </div>
 
-              {/* Desktop: Filter Dropdowns - 2x2 grid */}
-              <div className="hidden lg:grid grid-cols-2 gap-3 pb-4">
+              {/* Desktop: Filter Dropdowns - 5 filters in flexible layout */}
+              <div className="hidden lg:grid grid-cols-5 gap-2 pb-4">
                 <div>
-                  <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">COLOR</label>
-                  <select
-                    value={selectedColorFilters.length > 0 ? selectedColorFilters[0] : 'All'}
-                    onChange={e => handleColorDropdown(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
-                    style={selectArrowStyle}
-                  >
-                    <option value="All">All</option>
-                    {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">CATEGORY</label>
+                  <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">CATEGORIES</label>
                   <select
                     value={selectedCollectionFilters.length > 0 ? selectedCollectionFilters[0] : 'All'}
                     onChange={e => handleCategoryDropdown(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
+                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
                     style={selectArrowStyle}
                   >
                     <option value="All">All</option>
@@ -306,11 +314,23 @@ const PRINT_SIZES = {
                   </select>
                 </div>
                 <div>
+                  <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">COLOR</label>
+                  <select
+                    value={selectedColorFilters.length > 0 ? selectedColorFilters[0] : 'All'}
+                    onChange={e => handleColorDropdown(e.target.value)}
+                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
+                    style={selectArrowStyle}
+                  >
+                    <option value="All">All</option>
+                    {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">STYLE</label>
                   <select
                     value={selectedStyleFilters.length > 0 ? selectedStyleFilters[0] : 'All'}
                     onChange={e => handleStyleDropdown(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
+                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
                     style={selectArrowStyle}
                   >
                     <option value="All">All</option>
@@ -318,11 +338,23 @@ const PRINT_SIZES = {
                   </select>
                 </div>
                 <div>
+                  <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">ROOM</label>
+                  <select
+                    value={selectedRoomFilters.length > 0 ? selectedRoomFilters[0] : 'All'}
+                    onChange={e => handleRoomDropdown(e.target.value)}
+                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
+                    style={selectArrowStyle}
+                  >
+                    <option value="All">All</option>
+                    {roomOptions.map(r => <option key={r.value} value={r.value}>{r.name}</option>)}
+                  </select>
+                </div>
+                <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">ARTIST</label>
                   <select
                     value={selectedArtistFilters.length > 0 ? selectedArtistFilters[0] : 'All'}
                     onChange={e => handleArtistDropdown(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
+                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
                     style={selectArrowStyle}
                   >
                     <option value="All">All</option>

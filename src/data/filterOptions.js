@@ -1,18 +1,25 @@
-// Color options for filter
+// Color options for filter (visual color swatches)
 export const colorOptions = [
-  { name: 'Orange', color: '#F97316', value: 'orange' },
+  { name: 'Beige', color: '#D4B896', value: 'beige' },
+  { name: 'Black', color: '#1a1a1a', value: 'black' },
   { name: 'Blue', color: '#2563EB', value: 'blue' },
-  { name: 'Red', color: '#DC2626', value: 'red' },
+  { name: 'Brown', color: '#8B4513', value: 'brown' },
+  { name: 'Gold', color: '#D4A017', value: 'gold' },
   { name: 'Green', color: '#16A34A', value: 'green' },
-  { name: 'Neutral', color: '#D4B896', value: 'neutral' },
-  { name: 'Pink', color: '#EC4899', value: 'pink' }
+  { name: 'Grey', color: '#808080', value: 'grey' },
+  { name: 'Orange', color: '#F97316', value: 'orange' },
+  { name: 'Pink', color: '#FFC0CB', value: 'pink' },
+  { name: 'Purple', color: '#9333EA', value: 'purple' },
+  { name: 'Red', color: '#DC2626', value: 'red' },
+  { name: 'White', color: '#FFFFFF', value: 'white' },
+  { name: 'Yellow', color: '#FACC15', value: 'yellow' }
 ]
 
 // Orientation options
 export const orientationOptions = [
-  { name: 'horizontal', value: 'horizontal' },
-  { name: 'square', value: 'square' },
-  { name: 'vertical', value: 'vertical' }
+  { name: 'Portrait', value: 'portrait' },
+  { name: 'Landscape', value: 'landscape' },
+  { name: 'Square', value: 'square' }
 ]
 
 // Size options
@@ -25,57 +32,54 @@ export const sizeOptions = [
   { name: '70x100', value: '70x100' }
 ]
 
-// Style options
+// Style options (home/interior styles)
 export const styleOptions = [
-  { name: 'Japanese', value: 'japanese' },
-  { name: 'Modern', value: 'modern' },
-  { name: 'Minimalist', value: 'minimalist' },
-  { name: 'Scandinavian', value: 'scandinavian' },
-  { name: 'Japandi', value: 'japandi' },
-  { name: 'Industrial', value: 'industrial' },
+  { name: 'Bohemian & Eclectic', value: 'bohemian & eclectic' },
+  { name: 'Contemporary', value: 'contemporary' },
+  { name: 'Lodge', value: 'lodge' },
   { name: 'Mid-Century', value: 'mid-century' },
-  { name: 'Coastal', value: 'coastal' },
-  { name: 'Rustic', value: 'rustic' },
-  { name: 'Farmhouse', value: 'farmhouse' },
-  { name: 'Traditional', value: 'traditional' },
-  { name: 'Art Deco', value: 'art deco' }
+  { name: 'Minimalist', value: 'minimalist' },
+  { name: 'Modern', value: 'modern' },
+  { name: 'Retro/Vintage', value: 'retro/vintage' },
+  { name: 'Rustic & Primitive', value: 'rustic & primitive' }
 ]
 
-// Category options
+// Category options (themes/subjects)
 export const categoryOptions = [
+  { name: 'Popular Themes', value: 'popular themes' },
+  { name: 'Japanese & Cult Styles', value: 'japanese & cult styles' },
+  { name: 'Sports', value: 'sports' },
+  { name: 'Food & Drinks', value: 'food & drinks' },
   { name: 'Animals', value: 'animals' },
+  { name: 'Culture & Travel', value: 'culture & travel' },
+  { name: 'Maps & Cities', value: 'maps & cities' },
+  { name: 'Seasons', value: 'seasons' },
   { name: 'Nature', value: 'nature' },
-  { name: 'Abstract', value: 'abstract' },
-  { name: 'Landscape', value: 'landscape' }
+  { name: 'Kids & Teens', value: 'kids & teens' },
+  { name: 'Art Styles', value: 'art styles' },
+  { name: 'Lifestyle', value: 'lifestyle' },
+  { name: 'Space & Astronomy', value: 'space & astronomy' },
+  { name: 'Personalised Prints', value: 'personalised prints' },
+  { name: 'Wall Calendars', value: 'wall calendars' }
 ]
 
 // Artist options
 export const artistOptions = [
-  { name: 'Studio Zen', value: 'studio zen' },
-  { name: 'Minimalist Collective', value: 'minimalist collective' },
-  { name: 'Nature Studio', value: 'nature studio' },
-  { name: 'Color Theory', value: 'color theory' },
-  { name: 'Nordic Art Co.', value: 'nordic art co.' },
-  { name: 'Yayoi Kusama', value: 'yayoi kusama' },
-  { name: 'Graphic Studio', value: 'graphic studio' },
-  { name: 'Bauhaus Studio', value: 'bauhaus studio' },
-  { name: 'Matisse', value: 'matisse' }
+  { name: 'Bauhaus', value: 'bauhaus' },
+  { name: 'Laboo Studio', value: 'laboo studio' },
+  { name: 'Yayoi Kusama', value: 'yayoi kusama' }
 ]
 
 // Room options
 export const roomOptions = [
-  { name: 'Bathroom', value: 'bathroom' },
+  { name: 'Bar', value: 'bar' },
   { name: 'Bedroom', value: 'bedroom' },
-  { name: 'Cafe', value: 'cafe' },
   { name: 'Dorm', value: 'dorm' },
   { name: 'Entryway', value: 'entryway' },
   { name: 'Game Room', value: 'game room' },
   { name: 'Gym', value: 'gym' },
   { name: 'Kids', value: 'kids' },
   { name: 'Kitchen & Dining', value: 'kitchen & dining' },
-  { name: 'Laundry', value: 'laundry' },
   { name: 'Living Room', value: 'living room' },
-  { name: 'Nursery', value: 'nursery' },
-  { name: 'Office', value: 'office' },
-  { name: 'Restaurant', value: 'restaurant' }
+  { name: 'Office', value: 'office' }
 ]

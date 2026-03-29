@@ -699,7 +699,7 @@ const PRINT_SIZES = {
                                   if (!wasDraggingRef.current) setActiveFrameIndex(frame.idx)
                                   wasDraggingRef.current = false
                                 }}
-                                className="bg-white flex items-center justify-center overflow-hidden cursor-pointer group"
+                                className="relative bg-white overflow-hidden cursor-pointer group"
                                 style={{
                                   width: `${frame.width * scale}vw`,
                                   height: `${frame.height * scale}vw`,
@@ -710,13 +710,15 @@ const PRINT_SIZES = {
                               >
                                 {selectedArtworks[frame.idx] ? (
                                   <>
-                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="w-full h-full object-cover bg-gray-100 pointer-events-none" draggable={false} />
+                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none rounded-[1px]" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
-                                  <svg className="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                  </div>
                                 )}
                               </div>
                               <div className="absolute bottom-[-14px] left-0 right-0 flex justify-center pointer-events-none">
@@ -759,7 +761,7 @@ const PRINT_SIZES = {
                                   if (!wasDraggingRef.current) setActiveFrameIndex(idx)
                                   wasDraggingRef.current = false
                                 }}
-                                className="w-full h-full bg-white flex items-center justify-center overflow-hidden cursor-pointer group relative"
+                                className="w-full h-full bg-white overflow-hidden cursor-pointer group relative"
                                 style={{
                                   border: `${frame.borderWidth}px solid ${frameColor.border}`,
                                   borderRadius: '2px',
@@ -768,13 +770,15 @@ const PRINT_SIZES = {
                               >
                                 {artwork ? (
                                   <>
-                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-cover pointer-events-none" draggable={false} />
+                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
-                                  <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                  </div>
                                 )}
                                 {activeFrameIndex === idx && (
                                   <div className="absolute top-1 right-1 w-4 h-4 bg-[#4a6741] rounded-full flex items-center justify-center shadow-md z-10 pointer-events-none">
@@ -1244,7 +1248,7 @@ const PRINT_SIZES = {
                       }}
                     >
                       <div
-                        className="w-full h-full bg-white flex items-center justify-center overflow-hidden"
+                        className="w-full h-full bg-white overflow-hidden relative"
                         style={{
                           border: `${frame.borderWidth}px solid ${frameColor.border}`,
                           borderRadius: '2px',
@@ -1253,13 +1257,15 @@ const PRINT_SIZES = {
                       >
                         {artwork ? (
                           <>
-                            <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-cover pointer-events-none" draggable={false} />
+                            <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
                             <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                           </>
                         ) : (
-                          <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
-                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
+                            </svg>
+                          </div>
                         )}
                       </div>
                       <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-18px' }}>

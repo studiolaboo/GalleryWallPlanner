@@ -710,7 +710,7 @@ const PRINT_SIZES = {
                               >
                                 {selectedArtworks[frame.idx] ? (
                                   <>
-                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="w-full h-full object-contain bg-gray-100 pointer-events-none" draggable={false} />
+                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="w-full h-full object-cover bg-gray-100 pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none rounded-[1px]" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
@@ -768,7 +768,7 @@ const PRINT_SIZES = {
                               >
                                 {artwork ? (
                                   <>
-                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-contain pointer-events-none" draggable={false} />
+                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-cover pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
@@ -1253,7 +1253,7 @@ const PRINT_SIZES = {
                       >
                         {artwork ? (
                           <>
-                            <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-contain pointer-events-none" draggable={false} />
+                            <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="w-full h-full object-cover pointer-events-none" draggable={false} />
                             <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                           </>
                         ) : (

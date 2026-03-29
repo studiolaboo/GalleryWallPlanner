@@ -509,7 +509,7 @@ export default function SelectPlaceStep() {
                               >
                                 {selectedArtworks[idx] ? (
                                   <>
-                                    <img src={selectedArtworks[idx].artworkFile || selectedArtworks[idx].image} alt={selectedArtworks[idx].title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
+                                    <img src={selectedArtworks[idx].artworkFile || selectedArtworks[idx].image} alt={selectedArtworks[idx].title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none rounded-[1px]" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
@@ -570,7 +570,7 @@ export default function SelectPlaceStep() {
                             >
                               {artwork ? (
                                 <>
-                                  <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
+                                  <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
                                   <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                                 </>
                               ) : (
@@ -834,50 +834,60 @@ export default function SelectPlaceStep() {
 
               {selectedLayout && dynamicFrames && (() => {
                 const frameColor = FRAME_STYLE_COLORS[printStyle] || FRAME_STYLE_COLORS.Black
-                return dynamicFrames.map((frame, idx) => {
-                  const artwork = selectedArtworks[idx]
-                  return (
-                    <div
-                      key={idx}
-                      className="absolute select-none"
-                      style={{
-                        top: `${frame.centerY}%`,
-                        left: `${frame.centerX}%`,
-                        width: frame.width,
-                        aspectRatio: frame.aspectRatio,
-                        transform: 'translate(-50%, -50%)',
-                        zIndex: Math.round(100 - frame.centerY),
-                      }}
-                    >
-                      <div
-                        className="w-full h-full bg-white overflow-hidden relative"
-                        style={{
-                          border: `${frame.borderWidth}px solid ${frameColor.border}`,
-                          borderRadius: '2px',
-                          boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
-                        }}
-                      >
-                        {artwork ? (
-                          <>
-                            <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable={false} />
-                            <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
-                          </>
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
-                            </svg>
+                return (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      transform: `translate(${groupOffset.x}px, ${groupOffset.y}px)`,
+                    }}
+                  >
+                    {dynamicFrames.map((frame, idx) => {
+                      const artwork = selectedArtworks[idx]
+                      const indivBase = individualOffsets[idx] || { x: 0, y: 0 }
+                      return (
+                        <div
+                          key={idx}
+                          className="absolute select-none"
+                          style={{
+                            top: `${frame.centerY}%`,
+                            left: `${frame.centerX}%`,
+                            width: frame.width,
+                            aspectRatio: frame.aspectRatio,
+                            transform: `translate(calc(-50% + ${indivBase.x}px), calc(-50% + ${indivBase.y}px))`,
+                            zIndex: Math.round(100 - frame.centerY),
+                          }}
+                        >
+                          <div
+                            className="w-full h-full bg-white overflow-hidden relative"
+                            style={{
+                              border: `${frame.borderWidth}px solid ${frameColor.border}`,
+                              borderRadius: '2px',
+                              boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
+                            }}
+                          >
+                            {artwork ? (
+                              <>
+                                <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
+                                <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
+                                </svg>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-18px' }}>
-                        <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap uppercase">
-                          {frame.size}{/^A\d$/i.test(frame.size) ? '' : ` ${measurementUnit.toUpperCase()}`}
-                        </span>
-                      </div>
-                    </div>
-                  )
-                })
+                          <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-18px' }}>
+                            <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap uppercase">
+                              {frame.size}{/^A\d$/i.test(frame.size) ? '' : ` ${measurementUnit.toUpperCase()}`}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
               })()}
             </div>
           </div>

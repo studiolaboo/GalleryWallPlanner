@@ -1064,54 +1064,65 @@ export default function SelectLayoutStep() {
 
       {/* Layout Change Confirmation Modal */}
       {showLayoutChangeModal && (
-        <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 sm:p-8 max-w-md w-full relative shadow-2xl border border-gray-200">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-12 sm:p-16 max-w-[700px] w-full relative shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+            {/* Close button */}
             <button
               onClick={() => {
                 setShowLayoutChangeModal(false)
                 setPendingLayout(null)
               }}
-              className="absolute top-3 right-3 sm:top-4 sm:right-4 text-xl sm:text-2xl font-light text-gray-600 hover:text-black transition-colors cursor-pointer leading-none"
+              className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
             >
-              ✕
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
-            <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6 tracking-wide pr-8">
-              WOULD YOU LIKE TO CONTINUE?
-            </h2>
-            <p className="text-center text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 leading-relaxed">
-              YOU HAVE MADE CHANGES THAT HAVE NOT BEEN SAVED. WOULD YOU LIKE TO SAVE YOUR PICTURE WALL NOW?
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => {
-                  setShowLayoutChangeModal(false)
-                  setPendingLayout(null)
-                }}
-                className="bg-black text-white px-6 sm:px-8 py-2.5 sm:py-3 font-bold text-xs sm:text-sm tracking-wider hover:bg-gray-800 transition-all duration-200 cursor-pointer"
-              >
-                SAVE
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedArtworks({})
-                  setActiveFrameIndex(null)
-                  setSelectedLayout(pendingLayout)
-                  setShowLayoutChangeModal(false)
-                  setPendingLayout(null)
-                }}
-                className="bg-white text-black px-6 sm:px-8 py-2.5 sm:py-3 font-bold text-xs sm:text-sm tracking-wider border-2 border-black hover:bg-gray-100 transition-all duration-200 cursor-pointer"
-              >
-                DON'T SAVE
-              </button>
-              <button
-                onClick={() => {
-                  setShowLayoutChangeModal(false)
-                  setPendingLayout(null)
-                }}
-                className="bg-white text-black px-6 sm:px-8 py-2.5 sm:py-3 font-bold text-xs sm:text-sm tracking-wider border-2 border-black hover:bg-gray-100 transition-all duration-200 cursor-pointer"
-              >
-                CANCEL
-              </button>
+
+            {/* Content */}
+            <div className="mb-12">
+              <h2 className="font-inter text-3xl sm:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                WOULD YOU LIKE TO CONTINUE?
+              </h2>
+              <p className="font-inter text-base sm:text-lg text-gray-600 leading-relaxed">
+                YOU HAVE MADE CHANGES THAT HAVE NOT BEEN SAVED. WOULD YOU LIKE TO SAVE YOUR PICTURE WALL NOW?
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    setShowLayoutChangeModal(false)
+                    setPendingLayout(null)
+                  }}
+                  className="font-inter flex-1 bg-[#4a6741] text-white px-6 py-3 font-semibold text-sm tracking-wide uppercase rounded-xl hover:bg-[#3d5636] transition-all duration-300 cursor-pointer"
+                >
+                  SAVE
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedArtworks({})
+                    setActiveFrameIndex(null)
+                    setSelectedLayout(pendingLayout)
+                    setShowLayoutChangeModal(false)
+                    setPendingLayout(null)
+                  }}
+                  className="font-inter flex-1 bg-white text-gray-700 px-6 py-3 font-semibold text-sm tracking-wide uppercase rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 cursor-pointer"
+                >
+                  DON'T SAVE
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLayoutChangeModal(false)
+                    setPendingLayout(null)
+                  }}
+                  className="font-inter flex-1 bg-white text-gray-700 px-6 py-3 font-semibold text-sm tracking-wide uppercase rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 cursor-pointer"
+                >
+                  CANCEL
+                </button>
+              </div>
             </div>
           </div>
         </div>

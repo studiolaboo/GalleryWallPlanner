@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useGallery } from '../../context/GalleryContext'
-import { placeCategories, backgroundOptions, roomImages } from '../../data'
+import { placeCategories, backgroundOptions, roomImages, colorOptions } from '../../data'
 import { TopNavBar, Breadcrumb, MobileBottomNav, MobileMenuModal, ResetModal } from '../layout'
 import { processMobileFrames } from '../canvas'
 import { getDynamicFrames } from '../../utils/helpers'
@@ -9,10 +9,18 @@ import Ruler from '../Ruler'
 const PRINT_STYLE_OPTIONS = ['Black', 'White', 'Light Oak', 'Walnut']
 
 const FRAME_STYLE_COLORS = {
-  Black:      { border: '#1a1a1a', shadow: 'rgba(0,0,0,0.45)' },
-  White:      { border: '#f0f0f0', shadow: 'rgba(0,0,0,0.15)' },
-  'Light Oak': { border: '#c8a876', shadow: 'rgba(0,0,0,0.25)' },
-  Walnut:     { border: '#4a2c2a', shadow: 'rgba(0,0,0,0.35)' },
+  Black:      { border: '#000000', shadow: 'rgba(0,0,0,0.45)', inner: '#000000' },
+  White:      { border: '#ffffff', shadow: 'rgba(0,0,0,0.15)', inner: '#ffffff' },
+  'Light Oak': { border: '#c8a876', shadow: 'rgba(0,0,0,0.25)', inner: '#c8a876' },
+  Walnut:     { border: '#4a2c2a', shadow: 'rgba(0,0,0,0.35)', inner: '#4a2c2a' },
+}
+
+// Helper to get artwork's dominant color hex value
+const getArtworkBgColor = (artwork) => {
+  if (!artwork?.colors?.length) return '#1a1a1a'
+  const colorName = artwork.colors[0].toLowerCase().trim()
+  const colorMatch = colorOptions.find(c => c.value === colorName || c.name.toLowerCase() === colorName)
+  return colorMatch?.color || '#1a1a1a'
 }
 
 const PRINT_SIZES = {
@@ -499,13 +507,14 @@ export default function SelectPlaceStep() {
                               top: `${frame.calcTop * scale + centerOffsetY}%`,
                             }}>
                               <div
-                                className="relative bg-white overflow-hidden"
+                                className="relative overflow-hidden"
                                 style={{
                                   width: `${frame.width * scale}vw`,
                                   height: `${frame.height * scale}vw`,
                                   border: `${Math.max(1, frame.borderWidth - 1)}px solid ${frameColor.border}`,
                                   borderRadius: '1px',
                                   boxShadow: `0 4px 16px ${frameColor.shadow}, ${innerShadowCSS}`,
+                                  backgroundColor: selectedArtworks[idx] ? frameColor.inner : '#ffffff',
                                 }}
                               >
                                 {selectedArtworks[idx] ? (
@@ -562,11 +571,12 @@ export default function SelectPlaceStep() {
                                 if (!wasDraggingRef.current) setActiveFrameIndex(idx)
                                 wasDraggingRef.current = false
                               }}
-                              className="w-full h-full bg-white overflow-hidden cursor-pointer group relative"
+                              className="w-full h-full overflow-hidden cursor-pointer group relative"
                               style={{
                                 border: `${frame.borderWidth}px solid ${frameColor.border}`,
                                 borderRadius: '2px',
                                 boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
+                                backgroundColor: artwork ? frameColor.inner : '#ffffff',
                               }}
                             >
                               {artwork ? (
@@ -872,11 +882,12 @@ export default function SelectPlaceStep() {
                           }}
                         >
                           <div
-                            className="w-full h-full bg-white overflow-hidden relative"
+                            className="w-full h-full overflow-hidden relative"
                             style={{
                               border: `${frame.borderWidth}px solid ${frameColor.border}`,
                               borderRadius: '2px',
                               boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
+                              backgroundColor: artwork ? frameColor.inner : '#ffffff',
                             }}
                           >
                             {artwork ? (

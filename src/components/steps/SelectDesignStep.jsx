@@ -19,10 +19,10 @@ export default function SelectDesignStep() {
 const PRINT_STYLE_OPTIONS = ['Black', 'White', 'Light Oak', 'Walnut']
 
 const FRAME_STYLE_COLORS = {
-  Black:      { border: '#1a1a1a', shadow: 'rgba(0,0,0,0.45)' },
-  White:      { border: '#f0f0f0', shadow: 'rgba(0,0,0,0.15)' },
-  'Light Oak': { border: '#c8a876', shadow: 'rgba(0,0,0,0.25)' },
-  Walnut:     { border: '#4a2c2a', shadow: 'rgba(0,0,0,0.35)' },
+  Black:      { border: '#000000', shadow: 'rgba(0,0,0,0.45)', inner: '#000000' },
+  White:      { border: '#ffffff', shadow: 'rgba(0,0,0,0.15)', inner: '#ffffff' },
+  'Light Oak': { border: '#c8a876', shadow: 'rgba(0,0,0,0.25)', inner: '#c8a876' },
+  Walnut:     { border: '#4a2c2a', shadow: 'rgba(0,0,0,0.35)', inner: '#4a2c2a' },
 }
 
 const PRINT_SIZES = {
@@ -42,6 +42,14 @@ const PRINT_SIZES = {
     cm: ['13 × 18', '27 × 35', '30 × 40', '40 × 50', '40 × 60', '50 × 70', '60 × 80', '60 × 90', '70 × 100', '75 × 100', '21 × 29.7', '29.7 × 42', '42 × 59.4', '59.5 × 84.1', '84.1 × 118.9'],
     in: ['5 × 7', '11 × 14', '12 × 16', '16 × 20', '16 × 24', '20 × 28', '24 × 32', '24 × 36', '28 × 40', '30 × 40', 'A4', 'A3', 'A2', 'A1', 'A0'],
   },
+}
+
+// Helper to get artwork's dominant color hex value
+const getArtworkBgColor = (artwork) => {
+  if (!artwork?.colors?.length) return '#1a1a1a'
+  const colorName = artwork.colors[0].toLowerCase().trim()
+  const colorMatch = colorOptions.find(c => c.value === colorName || c.name.toLowerCase() === colorName)
+  return colorMatch?.color || '#1a1a1a'
 }
   const {
     setCurrentStep,
@@ -723,13 +731,14 @@ const PRINT_SIZES = {
                                   if (!wasDraggingRef.current) setActiveFrameIndex(frame.idx)
                                   wasDraggingRef.current = false
                                 }}
-                                className="relative bg-white overflow-hidden cursor-pointer group"
+                                className="relative overflow-hidden cursor-pointer group"
                                 style={{
                                   width: `${frame.width * scale}vw`,
                                   height: `${frame.height * scale}vw`,
                                   border: `${Math.max(1, frame.borderWidth - 1)}px solid ${frameColor.border}`,
                                   borderRadius: '1px',
                                   boxShadow: `0 4px 16px ${frameColor.shadow}, ${innerShadowCSS}`,
+                                  backgroundColor: selectedArtworks[frame.idx] ? frameColor.inner : '#ffffff',
                                 }}
                               >
                                 {selectedArtworks[frame.idx] ? (
@@ -785,11 +794,12 @@ const PRINT_SIZES = {
                                   if (!wasDraggingRef.current) setActiveFrameIndex(idx)
                                   wasDraggingRef.current = false
                                 }}
-                                className="w-full h-full bg-white overflow-hidden cursor-pointer group relative"
+                                className="w-full h-full overflow-hidden cursor-pointer group relative"
                                 style={{
                                   border: `${frame.borderWidth}px solid ${frameColor.border}`,
                                   borderRadius: '2px',
                                   boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
+                                  backgroundColor: artwork ? frameColor.inner : '#ffffff',
                                 }}
                               >
                                 {artwork ? (
@@ -1293,11 +1303,12 @@ const PRINT_SIZES = {
                           }}
                         >
                           <div
-                            className="w-full h-full bg-white overflow-hidden relative"
+                            className="w-full h-full overflow-hidden relative"
                             style={{
                               border: `${frame.borderWidth}px solid ${frameColor.border}`,
                               borderRadius: '2px',
                               boxShadow: `0 6px 24px ${frameColor.shadow}, 0 2px 8px rgba(0,0,0,0.12), ${innerShadowCSS}`,
+                              backgroundColor: artwork ? frameColor.inner : '#ffffff',
                             }}
                           >
                             {artwork ? (

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { useGallery } from '../../context/GalleryContext'
 import { backgroundOptions, colorOptions } from '../../data'
 import { TopNavBar, Breadcrumb, MobileBottomNav, MobileMenuModal, ResetModal } from '../layout'
@@ -96,6 +96,39 @@ const PRINT_SIZES = {
   })
   const [showEnlarge, setShowEnlarge] = useState(false)
   const [enlargeRuler, setEnlargeRuler] = useState(false)
+  const [enlargeCanvasAspectRatio, setEnlargeCanvasAspectRatio] = useState(1.6)
+  const [enlargeOffsetScale, setEnlargeOffsetScale] = useState({ x: 1, y: 1 })
+  const enlargeCanvasPreviewRef = useRef(null)
+
+  useEffect(() => {
+    if (!showEnlarge) return
+
+    const updateEnlargeCanvasAspectRatio = () => {
+      const sourceCanvasEl = canvasRef?.current
+      if (!sourceCanvasEl) return
+
+      const sourceRect = sourceCanvasEl.getBoundingClientRect()
+      const { width, height } = sourceRect
+      if (width > 0 && height > 0) {
+        setEnlargeCanvasAspectRatio(width / height)
+      }
+
+      const enlargedRect = enlargeCanvasPreviewRef.current?.getBoundingClientRect()
+      if (enlargedRect && width > 0 && height > 0 && enlargedRect.width > 0 && enlargedRect.height > 0) {
+        setEnlargeOffsetScale({
+          x: enlargedRect.width / width,
+          y: enlargedRect.height / height,
+        })
+      }
+    }
+
+    const rafId = window.requestAnimationFrame(updateEnlargeCanvasAspectRatio)
+    window.addEventListener('resize', updateEnlargeCanvasAspectRatio)
+    return () => {
+      window.cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', updateEnlargeCanvasAspectRatio)
+    }
+  }, [showEnlarge, canvasRef])
 
   // Keep sidebar quantities in sync when artworks change
   useEffect(() => {
@@ -1028,6 +1061,7 @@ const PRINT_SIZES = {
           {/* Canvas Preview */}
           <div className="flex-1 w-full max-w-5xl px-8 pb-6 min-h-0 flex items-center justify-center">
             <div
+              ref={enlargeCanvasPreviewRef}
               className="relative w-full h-full max-h-full bg-cover bg-center rounded-2xl overflow-hidden shadow-2xl"
               style={{
                 backgroundImage: selectedBackground
@@ -1035,7 +1069,7 @@ const PRINT_SIZES = {
                   : selectedPlace
                     ? `url(${selectedPlace.image})`
                     : "url(https://res.cloudinary.com/desenio/image/upload/w_1400/backgrounds/welcome-bg.jpg?v=1)",
-                aspectRatio: '16 / 10',
+                aspectRatio: `${enlargeCanvasAspectRatio}`,
                 maxWidth: '100%',
                 objectFit: 'contain',
               }}
@@ -1052,7 +1086,7 @@ const PRINT_SIZES = {
                   <div
                     className="absolute inset-0"
                     style={{
-                      transform: `translate(${groupOffset.x}px, ${groupOffset.y}px)`,
+                      transform: `translate(${(groupOffset.x + dragOffset.x) * enlargeOffsetScale.x}px, ${(groupOffset.y + dragOffset.y) * enlargeOffsetScale.y}px)`,
                     }}
                   >
                     {dynamicFrames.map((frame, idx) => {
@@ -1067,7 +1101,7 @@ const PRINT_SIZES = {
                             left: `${frame.centerX}%`,
                             width: frame.width,
                             aspectRatio: frame.aspectRatio,
-                            transform: `translate(calc(-50% + ${indivBase.x}px), calc(-50% + ${indivBase.y}px))`,
+                            transform: `translate(calc(-50% + ${indivBase.x * enlargeOffsetScale.x}px), calc(-50% + ${indivBase.y * enlargeOffsetScale.y}px))`,
                             zIndex: Math.round(100 - frame.centerY),
                           }}
                         >

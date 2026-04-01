@@ -743,7 +743,7 @@ const getArtworkBgColor = (artwork) => {
                               >
                                 {selectedArtworks[frame.idx] ? (
                                   <>
-                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
+                                    <img src={selectedArtworks[frame.idx].artworkFile || selectedArtworks[frame.idx].image} alt={selectedArtworks[frame.idx].title} className="absolute inset-0 w-full h-full object-fill pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none rounded-[1px]" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
@@ -804,7 +804,7 @@ const getArtworkBgColor = (artwork) => {
                               >
                                 {artwork ? (
                                   <>
-                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
+                                    <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-fill pointer-events-none" draggable={false} />
                                     <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                                   </>
                                 ) : (
@@ -1313,7 +1313,7 @@ const getArtworkBgColor = (artwork) => {
                           >
                             {artwork ? (
                               <>
-                                <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-contain pointer-events-none" draggable={false} />
+                                <img src={artwork.artworkFile || artwork.image} alt={artwork.title} className="absolute inset-0 w-full h-full object-fill pointer-events-none" draggable={false} />
                                 <div className="absolute inset-0 pointer-events-none" style={{boxShadow: innerShadowCSS}} />
                               </>
                             ) : (

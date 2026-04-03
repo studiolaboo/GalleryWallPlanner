@@ -108,9 +108,12 @@ const getArtworkBgColor = (artwork) => {
   const [detailArtwork, setDetailArtwork] = useState(null)
   const [showEnlarge, setShowEnlarge] = useState(false)
   const [enlargeRuler, setEnlargeRuler] = useState(false)
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const [expandedCategoryValues, setExpandedCategoryValues] = useState([])
   const [enlargeCanvasAspectRatio, setEnlargeCanvasAspectRatio] = useState(1.6)
   const [enlargeOffsetScale, setEnlargeOffsetScale] = useState({ x: 1, y: 1 })
   const enlargeCanvasPreviewRef = useRef(null)
+  const categoryMenuRef = useRef(null)
 
   useEffect(() => {
     if (!showEnlarge) return
@@ -260,6 +263,8 @@ const getArtworkBgColor = (artwork) => {
     } else {
       setSelectedCollectionFilters([val])
     }
+    setExpandedCategoryValues([])
+    setIsCategoryMenuOpen(false)
   }
 
   const handleStyleDropdown = (val) => {
@@ -285,6 +290,149 @@ const getArtworkBgColor = (artwork) => {
       setSelectedArtistFilters([val])
     }
   }
+
+  useEffect(() => {
+    if (!isCategoryMenuOpen) return
+
+    const handleClickOutside = (event) => {
+      if (categoryMenuRef.current && !categoryMenuRef.current.contains(event.target)) {
+        setIsCategoryMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isCategoryMenuOpen])
+
+  const noPlusCategoryValues = new Set(['space & astronomy', 'personalised prints', 'wall calendars'])
+
+  const specificCategorySubOptions = {
+    'popular themes': [
+      { label: 'Botanical Wall Art', value: 'botanical wall art' },
+      { label: 'Coastal Wall Art', value: 'coastal wall art' },
+      { label: 'Travel Wall Art', value: 'travel wall art' },
+      { label: 'Space & Astronomy', value: 'space & astronomy' },
+      { label: 'Typography Wall Art', value: 'typography wall art' },
+      { label: 'Motivational Quotes', value: 'motivational quotes' },
+      { label: 'Animal Wall Art', value: 'animal wall art' },
+    ],
+    'japanese & cult styles': [
+      { label: 'All Japanese Wall Art', value: 'japanese & cult styles' },
+      { label: 'Japanese Pop Art', value: 'japanese pop art' },
+      { label: 'Japanese Mythology Art', value: 'japanese mythology art' },
+      { label: 'Ukiyo-e Prints', value: 'ukiyo-e prints' },
+      { label: 'Ink Wash Art', value: 'ink wash art' },
+      { label: 'Wabi Sabi Wall Art', value: 'wabi sabi wall art' },
+    ],
+    sports: [
+      { label: 'All Sports Wall Art', value: 'sports' },
+      { label: 'Basketball', value: 'basketball' },
+      { label: 'Cars', value: 'cars' },
+      { label: 'Cycling', value: 'cycling' },
+      { label: 'Football/Soccer', value: 'football/soccer' },
+      { label: 'Formula 1', value: 'formula 1' },
+      { label: 'Golf', value: 'golf' },
+      { label: 'Skiing', value: 'skiing' },
+      { label: 'Surfing', value: 'surfing' },
+      { label: 'Tennis', value: 'tennis' },
+    ],
+    'food & drinks': [
+      { label: 'Bar Wall Art', value: 'bar wall art' },
+      { label: 'Cocktail Wall Art', value: 'cocktail wall art' },
+      { label: 'Coffee Wall Art', value: 'coffee wall art' },
+      { label: 'Food Wall Art', value: 'food wall art' },
+      { label: 'Fruit Wall Art', value: 'fruit wall art' },
+      { label: 'Italian Kitchen Art', value: 'italian kitchen art' },
+      { label: 'Ramen Posters', value: 'ramen posters' },
+    ],
+    animals: [
+      { label: 'All animals', value: 'animals' },
+      { label: 'Birds', value: 'birds' },
+      { label: 'Cats', value: 'cats' },
+      { label: 'Dogs', value: 'dogs' },
+      { label: 'Elephants', value: 'elephants' },
+      { label: 'Fish', value: 'fish' },
+      { label: 'Foxes', value: 'foxes' },
+      { label: 'Horses', value: 'horses' },
+      { label: 'Insects', value: 'insects' },
+      { label: 'Leopards', value: 'leopards' },
+      { label: 'Lions', value: 'lions' },
+      { label: 'Panthers', value: 'panthers' },
+      { label: 'Wildlife', value: 'wildlife' },
+      { label: 'Tigers', value: 'tigers' },
+    ],
+    'culture & travel': [
+      { label: 'Greek Wall Art', value: 'greek wall art' },
+      { label: 'Indian Wall Art', value: 'indian wall art' },
+      { label: 'Italian Wall Art', value: 'italian wall art' },
+      { label: 'Japanese Wall Art', value: 'japanese wall art' },
+      { label: 'Mexican Wall Art', value: 'mexican wall art' },
+    ],
+    'maps & cities': [
+      { label: 'All Travel', value: 'culture & travel' },
+      { label: 'All Cities', value: 'maps & cities' },
+      { label: 'London', value: 'london' },
+      { label: 'New York', value: 'new york' },
+      { label: 'Paris', value: 'paris' },
+      { label: 'Rome', value: 'rome' },
+      { label: 'Tokyo', value: 'tokyo' },
+    ],
+    seasons: [
+      { label: 'All seasons', value: 'seasons' },
+      { label: 'Summer prints', value: 'summer prints' },
+      { label: 'Spring prints', value: 'spring prints' },
+      { label: 'Autumn prints', value: 'autumn prints' },
+      { label: 'Winter prints', value: 'winter prints' },
+      { label: 'Holiday Posters', value: 'holiday posters' },
+    ],
+    nature: [
+      { label: 'All nature', value: 'nature' },
+      { label: 'Botanical', value: 'botanical' },
+      { label: 'Beaches', value: 'beaches' },
+      { label: 'Forests', value: 'forests' },
+      { label: 'Landscapes', value: 'landscapes' },
+      { label: 'Mountains', value: 'mountains' },
+      { label: 'Seas and oceans', value: 'seas and oceans' },
+      { label: 'Tropical', value: 'tropical' },
+    ],
+    'kids & teens': [
+      { label: 'All kids wall art', value: 'kids & teens' },
+      { label: 'Teen wall art', value: 'teen wall art' },
+    ],
+    'art styles': [
+      { label: 'Botanical', value: 'botanical' },
+      { label: 'Illustrations', value: 'illustrations' },
+      { label: 'Graphical', value: 'graphical' },
+      { label: 'Line Art', value: 'line art' },
+      { label: 'Paintings', value: 'paintings' },
+      { label: 'Black and white', value: 'black and white' },
+    ],
+    lifestyle: [
+      { label: 'Fashion', value: 'fashion' },
+      { label: 'Music', value: 'music' },
+      { label: 'Architecture', value: 'architecture' },
+    ],
+  }
+
+  const getCategorySubOptions = (option) => {
+    if (noPlusCategoryValues.has(option.value)) return []
+    if (specificCategorySubOptions[option.value]) return specificCategorySubOptions[option.value]
+    return [{ label: `All ${option.name}`, value: option.value }]
+  }
+
+  const selectedCategoryLabel = selectedCollectionFilters.length > 0
+    ? (() => {
+        const selectedValue = selectedCollectionFilters[0]
+        const baseCategory = categoryOptions.find(c => c.value === selectedValue)
+        if (baseCategory) return baseCategory.name
+
+        const subCategoryLabel = Object.values(specificCategorySubOptions)
+          .flat()
+          .find(item => item.value === selectedValue)?.label
+
+        return subCategoryLabel || selectedValue
+      })()
+    : 'All'
 
   return (
     <>
@@ -336,15 +484,79 @@ const getArtworkBgColor = (artwork) => {
               <div className="hidden lg:grid grid-cols-5 gap-2 pb-4">
                 <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">CATEGORIES</label>
-                  <select
-                    value={selectedCollectionFilters.length > 0 ? selectedCollectionFilters[0] : 'All'}
-                    onChange={e => handleCategoryDropdown(e.target.value)}
-                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
-                    style={selectArrowStyle}
-                  >
-                    <option value="All">All</option>
-                    {categoryOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                  </select>
+                  <div className="relative" ref={categoryMenuRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsCategoryMenuOpen(v => !v)}
+                      className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer flex items-center justify-between"
+                    >
+                      <span className="truncate">{selectedCategoryLabel}</span>
+                      <svg className={`w-4 h-4 text-gray-500 transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+
+                    {isCategoryMenuOpen && (
+                      <div className="absolute z-50 mt-1 w-[280px] max-w-[70vw] max-h-72 overflow-y-auto border border-gray-300 bg-white shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => handleCategoryDropdown('All')}
+                          className="w-full px-3 py-2 text-left text-xs text-black hover:bg-gray-100 transition-colors"
+                        >
+                          All
+                        </button>
+                        {categoryOptions.map((option) => (
+                          <div key={option.value} className="border-b border-gray-100 last:border-b-0">
+                            {(() => {
+                              const subOptions = getCategorySubOptions(option)
+                              const isExpandable = subOptions.length > 0
+                              const isExpanded = expandedCategoryValues.includes(option.value) && isExpandable
+
+                              return (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (isExpandable) {
+                                        setExpandedCategoryValues(prev => (
+                                          prev.includes(option.value)
+                                            ? prev.filter(v => v !== option.value)
+                                            : [...prev, option.value]
+                                        ))
+                                      } else {
+                                        handleCategoryDropdown(option.value)
+                                      }
+                                    }}
+                                    className="w-full px-3 py-2 text-left text-xs text-black transition-colors flex items-center justify-between hover:bg-gray-100"
+                                  >
+                                    <span className="pr-2 whitespace-normal leading-snug">{option.name}</span>
+                                    {isExpandable && (
+                                      <span className="text-base leading-none font-light">{isExpanded ? '×' : '+'}</span>
+                                    )}
+                                  </button>
+
+                                  {isExpanded && (
+                                    <div className="px-3 pb-2 bg-white space-y-0.5">
+                                      {subOptions.map((subOption) => (
+                                        <button
+                                          key={`${option.value}-${subOption.value}`}
+                                          type="button"
+                                          onClick={() => handleCategoryDropdown(subOption.value)}
+                                          className="w-full text-left text-[12px] py-1.5 px-2 text-black transition-colors hover:bg-gray-100"
+                                        >
+                                          {subOption.label}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </>
+                              )
+                            })()}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">COLOR</label>

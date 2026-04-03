@@ -288,6 +288,66 @@ export function GalleryProvider({ children }) {
     }
   }
 
+  const COLLECTION_FILTER_ALIASES = {
+    'popular themes': ['botanical wall art', 'coastal wall art', 'travel wall art', 'space astronomy', 'typography wall art', 'motivational quotes', 'animal wall art'],
+    'japanese cult styles': ['japanese wall art', 'japanese pop art', 'japanese mythology art', 'ukiyo e prints', 'ink wash art', 'wabi sabi wall art'],
+    sports: ['basketball', 'cars', 'cycling', 'football soccer', 'formula 1', 'golf', 'skiing', 'surfing', 'tennis'],
+    'food drinks': ['bar wall art', 'cocktail wall art', 'coffee wall art', 'food wall art', 'fruit wall art', 'italian kitchen art', 'ramen posters'],
+    animals: ['birds', 'cats', 'dogs', 'elephants', 'fish', 'foxes', 'horses', 'insects', 'leopards', 'lions', 'panthers', 'wildlife', 'tigers'],
+    'culture travel': ['greek wall art', 'indian wall art', 'italian wall art', 'japanese wall art', 'mexican wall art'],
+    'maps cities': ['all travel', 'all cities', 'london', 'new york', 'paris', 'rome', 'tokyo'],
+    seasons: ['all seasons', 'summer prints', 'spring prints', 'autumn prints', 'winter prints', 'holiday posters'],
+    nature: ['all nature', 'botanical', 'beaches', 'forests', 'landscapes', 'mountains', 'seas and oceans', 'tropical'],
+    'kids teens': ['all kids wall art', 'teen wall art'],
+    'art styles': ['botanical', 'illustrations', 'graphical', 'line art', 'paintings', 'black and white'],
+    lifestyle: ['fashion', 'music', 'architecture'],
+  }
+
+  const normalizeFilterText = (value) => String(value ?? '')
+    .toLowerCase()
+    .replace(/[&/]/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+  const compactFilterText = (value) => String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+
+  const getCollectionFilterTerms = (filterValue) => {
+    const normalized = normalizeFilterText(filterValue)
+    const compact = compactFilterText(filterValue)
+    const aliases = COLLECTION_FILTER_ALIASES[normalized] || COLLECTION_FILTER_ALIASES[compact] || []
+    const normalizedAliases = aliases.map(normalizeFilterText).filter(Boolean)
+    return Array.from(new Set([normalized, compact, ...normalizedAliases, ...normalizedAliases.map(compactFilterText)].filter(Boolean)))
+  }
+
+  const matchesCollectionFilter = (artwork, filterValue) => {
+    const terms = getCollectionFilterTerms(filterValue)
+    const searchableParts = [
+      artwork?.category,
+      artwork?.productType,
+      artwork?.title,
+      ...(Array.isArray(artwork?.tags) ? artwork.tags : []),
+      ...(Array.isArray(artwork?.styles) ? artwork.styles : []),
+      ...(Array.isArray(artwork?.artists) ? artwork.artists : []),
+    ].filter(Boolean).map(part => String(part).toLowerCase())
+
+    return terms.some(term => {
+      const normalizedTerm = normalizeFilterText(term)
+      const compactTerm = compactFilterText(term)
+      return searchableParts.some(part => {
+        const normalizedPart = normalizeFilterText(part)
+        const compactPart = compactFilterText(part)
+        return (
+          normalizedPart.includes(normalizedTerm) ||
+          normalizedTerm.includes(normalizedPart) ||
+          compactPart.includes(compactTerm) ||
+          compactTerm.includes(compactPart)
+        )
+      })
+    })
+  }
+
   // Memoized filtered artworks — only recalculates when products or filters change
   const filteredArtworks = useMemo(() => {
     let filtered = artworkProducts
@@ -414,38 +474,7 @@ export function GalleryProvider({ children }) {
     // Apply category filters (matches against category, productType, tags, and title)
     if (selectedCollectionFilters.length > 0) {
       filtered = filtered.filter(artwork => {
-        return selectedCollectionFilters.some(cat => {
-          const normalizedCat = cat.toLowerCase().trim()
-
-          // Match against the category field
-          if (artwork.category) {
-            const normalizedCategory = artwork.category.toLowerCase().trim()
-            if (normalizedCategory === normalizedCat || normalizedCategory.includes(normalizedCat) || normalizedCat.includes(normalizedCategory)) return true
-          }
-
-          // Match against productType
-          if (artwork.productType) {
-            const productType = artwork.productType.toLowerCase().trim()
-            if (productType === normalizedCat || productType.includes(normalizedCat) || normalizedCat.includes(productType)) return true
-          }
-
-          // Match against tags
-          if (artwork.tags && Array.isArray(artwork.tags)) {
-            const matchesTag = artwork.tags.some(tag => {
-              const normalizedTag = tag.toLowerCase().trim()
-              return normalizedTag === normalizedCat || normalizedTag.includes(normalizedCat) || normalizedCat.includes(normalizedTag)
-            })
-            if (matchesTag) return true
-          }
-
-          // Match against title
-          if (artwork.title) {
-            const normalizedTitle = artwork.title.toLowerCase().trim()
-            if (normalizedTitle.includes(normalizedCat)) return true
-          }
-
-          return false
-        })
+        return selectedCollectionFilters.some(cat => matchesCollectionFilter(artwork, cat))
       })
     }
 

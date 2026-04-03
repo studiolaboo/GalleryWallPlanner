@@ -91,7 +91,7 @@ export function GalleryProvider({ children }) {
   const [measurementUnit, setMeasurementUnit] = useState('cm')
   const [printOrientation, setPrintOrientation] = useState('Portrait')
   const [printStyle, setPrintStyle] = useState('Black')
-  const [printSize, setPrintSize] = useState('13 × 18')
+  const [printSize, setPrintSize] = useState('50 × 70')
   const [perFrameSizes, setPerFrameSizes] = useState([]) // per-frame size overrides
   const [spacingPreset, setSpacingPreset] = useState('tight')
   const [spacingValue, setSpacingValue] = useState(2) // in cm
@@ -1005,7 +1005,7 @@ export function GalleryProvider({ children }) {
     setShowResetToast(true)
     setTimeout(() => setShowResetToast(false), 4000)
     setPrintOrientation('Portrait')
-    setPrintSize('13 × 18')
+    setPrintSize('50 × 70')
     setPrintStyle('Black')
     setMeasurementUnit('cm')
     setInnerShadow({ xOffset: 0, yOffset: 2, blur: 10, spread: 0, opacity: 20 })

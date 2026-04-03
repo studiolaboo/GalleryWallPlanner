@@ -564,8 +564,8 @@ const PRINT_SIZES = {
                                     </div>
                                   )}
                                 </div>
-                                <div className="absolute bottom-[-14px] left-0 right-0 flex justify-center pointer-events-none">
-                                  <span className="bg-white/90 text-gray-600 text-[5px] font-bold tracking-wider px-1 py-0.5 rounded whitespace-nowrap uppercase">
+                                <div className="absolute bottom-[-18px] left-0 right-0 flex justify-center pointer-events-none">
+                                  <span className="bg-white/90 text-gray-600 text-[8px] font-bold tracking-wider px-2 py-0.5 rounded-md whitespace-nowrap uppercase">
                                     {frame.size}{/^A\d$/i.test(frame.size) ? '' : ` ${measurementUnit.toUpperCase()}`}
                                   </span>
                                 </div>
@@ -650,8 +650,8 @@ const PRINT_SIZES = {
                                   </svg>
                                 </button>
                               </div>
-                              <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-18px' }}>
-                                <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap uppercase">
+                              <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-22px' }}>
+                                <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[9px] font-bold tracking-wider px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap uppercase">
                                   {frame.size}{/^A\d$/i.test(frame.size) ? '' : ` ${measurementUnit.toUpperCase()}`}
                                 </span>
                               </div>
@@ -804,13 +804,6 @@ const PRINT_SIZES = {
                     {PRINT_STYLE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-sm text-gray-400 italic leading-snug">
-                  {selectedPlace
-                    ? `A ${selectedPlace.name?.toLowerCase()} is the heart of the home.`
-                    : 'Choose a room to begin.'}
-                </p>
               </div>
             </div>
 
@@ -1127,8 +1120,8 @@ const PRINT_SIZES = {
                               </div>
                             )}
                           </div>
-                          <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-18px' }}>
-                            <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap uppercase">
+                          <div className="absolute left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '-22px' }}>
+                            <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-[9px] font-bold tracking-wider px-2.5 py-1 rounded-md shadow-sm whitespace-nowrap uppercase">
                               {frame.size}{/^A\d$/i.test(frame.size) ? '' : ` ${measurementUnit.toUpperCase()}`}
                             </span>
                           </div>

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "./assets/icons.css";
 
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 /* Hide elements when in fullscreen mode */
 :fullscreen .hide-in-fullscreen,
 :-webkit-full-screen .hide-in-fullscreen,
@@ -17,6 +21,10 @@
 }
 
 /* Custom styles for the gallery configurator */
+* {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

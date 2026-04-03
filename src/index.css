@@ -19,9 +19,16 @@
 /* Custom styles for the gallery configurator */
 body {
   margin: 0;
-  font-family: 'Raleway', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* Landing Page Styles - Exact replica */
@@ -537,7 +544,7 @@ body {
 }
 
 .raleway {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .buyLeft {

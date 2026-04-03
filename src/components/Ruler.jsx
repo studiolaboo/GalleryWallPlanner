@@ -25,7 +25,7 @@ function buildCMTicks(pxPerUnit) {
         <line x1={x} y1={0} x2={x} y2={topH} stroke={col} strokeWidth={sw} />
         {isMajor && cm > 0 && (
           <text x={x} y={RULER_H - 4} textAnchor="middle" fontSize="6.5"
-            fontFamily="Arial, sans-serif" fill="#333" fontWeight="600">
+            fontFamily="Inter, sans-serif" fill="#333" fontWeight="600">
             {cm}
           </text>
         )}
@@ -50,7 +50,7 @@ function buildInTicks(pxPerUnit) {
         <line x1={x} y1={0} x2={x} y2={topH} stroke={col} strokeWidth={sw} />
         {isMajor && inch > 0 && (
           <text x={x} y={RULER_H - 4} textAnchor="middle" fontSize="6.5"
-            fontFamily="Arial, sans-serif" fill="#333" fontWeight="600">
+            fontFamily="Inter, sans-serif" fill="#333" fontWeight="600">
             {inch}&quot;
           </text>
         )}

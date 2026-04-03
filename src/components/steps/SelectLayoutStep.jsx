@@ -674,7 +674,7 @@ export default function SelectLayoutStep() {
                 {/* Inner Shadow Code Display */}
                 <div className="mt-5 bg-gray-50 border border-gray-200 rounded-lg p-3">
                   <label className="text-[9px] font-bold tracking-widest text-gray-500 mb-1.5 block">INNER SHADOW CODE:</label>
-                  <p className="text-[11px] text-gray-600 font-mono break-all">{innerShadowCSS}</p>
+                  <p className="text-[11px] text-gray-600 font-sans break-all">{innerShadowCSS}</p>
                 </div>
               </div>
 

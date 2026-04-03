@@ -107,7 +107,7 @@ export default function IntroStep() {
               <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4 sm:px-8">
                 <div className="bg-black/70 backdrop-blur-sm px-6 sm:px-10 md:px-14 lg:px-24 xl:px-32 py-6 sm:py-8 md:py-10 lg:py-16 xl:py-20">
                   <p className="text-[8px] sm:text-[10px] lg:text-xs tracking-[0.2em] sm:tracking-[0.3em] mb-2 sm:mb-3 lg:mb-5 text-gray-300 font-light">STEP-BY-STEP</p>
-                  <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif italic mb-2 sm:mb-3 md:mb-4 lg:mb-6 text-white font-light leading-tight">
+                  <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-sans italic mb-2 sm:mb-3 md:mb-4 lg:mb-6 text-white font-light leading-tight">
                     Create the perfect gallery wall
                   </h2>
                   <p className="text-[10px] sm:text-xs md:text-sm lg:text-base mb-4 sm:mb-5 md:mb-6 lg:mb-10 text-gray-200 font-light leading-relaxed">

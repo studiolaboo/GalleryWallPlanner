@@ -109,11 +109,13 @@ const getArtworkBgColor = (artwork) => {
   const [showEnlarge, setShowEnlarge] = useState(false)
   const [enlargeRuler, setEnlargeRuler] = useState(false)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const [isColorMenuOpen, setIsColorMenuOpen] = useState(false)
   const [expandedCategoryValues, setExpandedCategoryValues] = useState([])
   const [enlargeCanvasAspectRatio, setEnlargeCanvasAspectRatio] = useState(1.6)
   const [enlargeOffsetScale, setEnlargeOffsetScale] = useState({ x: 1, y: 1 })
   const enlargeCanvasPreviewRef = useRef(null)
   const categoryMenuRef = useRef(null)
+  const colorMenuRef = useRef(null)
 
   useEffect(() => {
     if (!showEnlarge) return
@@ -255,6 +257,7 @@ const getArtworkBgColor = (artwork) => {
     } else {
       setSelectedColorFilters([val])
     }
+    setIsColorMenuOpen(false)
   }
 
   const handleCategoryDropdown = (val) => {
@@ -303,6 +306,19 @@ const getArtworkBgColor = (artwork) => {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isCategoryMenuOpen])
+
+  useEffect(() => {
+    if (!isColorMenuOpen) return
+
+    const handleClickOutside = (event) => {
+      if (colorMenuRef.current && !colorMenuRef.current.contains(event.target)) {
+        setIsColorMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isColorMenuOpen])
 
   const noPlusCategoryValues = new Set(['space & astronomy', 'personalised prints', 'wall calendars'])
 
@@ -560,15 +576,49 @@ const getArtworkBgColor = (artwork) => {
                 </div>
                 <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">COLOR</label>
-                  <select
-                    value={selectedColorFilters.length > 0 ? selectedColorFilters[0] : 'All'}
-                    onChange={e => handleColorDropdown(e.target.value)}
-                    className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer appearance-none"
-                    style={selectArrowStyle}
-                  >
-                    <option value="All">All</option>
-                    {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                  </select>
+                  <div className="relative" ref={colorMenuRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsColorMenuOpen(v => !v)}
+                      className="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#4a6741] cursor-pointer flex items-center justify-between"
+                      aria-label="Select color filter"
+                    >
+                      <span className="flex items-center">
+                        {selectedColorFilters.length > 0 ? (
+                          <span
+                            className="w-5 h-5 border border-gray-300 rounded-sm flex-shrink-0"
+                            style={{ background: (colorOptions.find(c => c.value === selectedColorFilters[0])?.color) || '#ffffff' }}
+                          />
+                        ) : (
+                          <span className="w-5 h-5 border border-gray-300 rounded-sm flex-shrink-0 bg-white relative overflow-hidden">
+                            <span className="absolute inset-0 block" style={{ background: 'linear-gradient(135deg, transparent 46%, #9ca3af 46%, #9ca3af 54%, transparent 54%)' }} />
+                          </span>
+                        )}
+                      </span>
+                      <svg className={`w-4 h-4 text-gray-500 transition-transform ${isColorMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+
+                    {isColorMenuOpen && (
+                      <div className="absolute z-50 mt-1 left-0 w-[20rem] border border-gray-300 bg-white shadow-lg">
+                        <div className="grid grid-cols-4 gap-x-6 gap-y-6 p-6 justify-items-center">
+                          {colorOptions.map((c) => (
+                            <button
+                              key={c.value}
+                              type="button"
+                              onClick={() => handleColorDropdown(c.value)}
+                              title={c.name}
+                              aria-label={c.name}
+                              className={`w-12 h-12 p-0 border-2 transition-all ${selectedColorFilters.includes(c.value) ? 'border-black ring-1 ring-black' : 'border-transparent hover:border-gray-300'}`}
+                            >
+                              <span className="block w-full h-full" style={{ background: c.color }} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold tracking-widest text-gray-500 mb-1.5 block">STYLE</label>

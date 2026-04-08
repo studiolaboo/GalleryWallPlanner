@@ -313,6 +313,55 @@ export function GalleryProvider({ children }) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '')
 
+  const COLOR_FILTER_ALIASES = {
+    neutral: ['beige', 'grey', 'gray', 'brown', 'cream', 'tan', 'ivory', 'taupe', 'sand', 'khaki', 'earthy', 'natural', 'warm', 'muted', 'earth'],
+    'black white': ['black and white', 'black/white', 'black & white', 'monochrome', 'monochromatic', 'b&w', 'bw'],
+    rainbow: ['multicolor', 'multi color', 'multi-colour', 'colourful', 'colorful', 'prismatic', 'prism'],
+    indigo: ['blue', 'navy', 'cobalt', 'purple', 'violet'],
+    purple: ['violet', 'lavender', 'lilac'],
+    violet: ['purple', 'lavender', 'lilac'],
+  }
+
+  const getColorFilterTerms = (filterValue) => {
+    const normalized = normalizeFilterText(filterValue)
+    const compact = compactFilterText(filterValue)
+    const aliases = COLOR_FILTER_ALIASES[normalized] || COLOR_FILTER_ALIASES[compact] || []
+    const normalizedAliases = aliases.map(normalizeFilterText).filter(Boolean)
+
+    return Array.from(new Set([
+      normalized,
+      compact,
+      ...normalizedAliases,
+      ...normalizedAliases.map(compactFilterText),
+    ].filter(Boolean)))
+  }
+
+  const matchesColorFilter = (artwork, filterValue) => {
+    const terms = getColorFilterTerms(filterValue)
+    const searchableParts = [
+      ...(Array.isArray(artwork?.colors) ? artwork.colors : []),
+      ...(Array.isArray(artwork?.tags) ? artwork.tags : []),
+      artwork?.category,
+      artwork?.title,
+      artwork?.productType,
+    ].filter(Boolean).map(part => String(part))
+
+    return terms.some(term => {
+      const normalizedTerm = normalizeFilterText(term)
+      const compactTerm = compactFilterText(term)
+      return searchableParts.some(part => {
+        const normalizedPart = normalizeFilterText(part)
+        const compactPart = compactFilterText(part)
+        return (
+          normalizedPart.includes(normalizedTerm) ||
+          normalizedTerm.includes(normalizedPart) ||
+          compactPart.includes(compactTerm) ||
+          compactTerm.includes(compactPart)
+        )
+      })
+    })
+  }
+
   const getCollectionFilterTerms = (filterValue) => {
     const normalized = normalizeFilterText(filterValue)
     const compact = compactFilterText(filterValue)
@@ -379,38 +428,8 @@ export function GalleryProvider({ children }) {
 
     // Apply color filters
     if (selectedColorFilters.length > 0) {
-      // Map 'neutral' to a family of neutral tones
-      const NEUTRAL_SYNONYMS = ['neutral', 'beige', 'grey', 'gray', 'brown', 'cream', 'tan', 'ivory', 'taupe', 'sand', 'khaki', 'earthy', 'natural', 'warm', 'muted', 'earth']
-
-      const expandedColorFilters = selectedColorFilters.flatMap(f => {
-        if (f.toLowerCase().trim() === 'neutral') return NEUTRAL_SYNONYMS
-        return [f]
-      })
-
       filtered = filtered.filter(artwork => {
-        return expandedColorFilters.some(colorFilter => {
-          const normalizedFilter = colorFilter.toLowerCase().trim()
-          // Match against colors metafield
-          if (artwork.colors && Array.isArray(artwork.colors) && artwork.colors.length > 0) {
-            const matchesColor = artwork.colors.some(color => {
-              const normalizedColor = color.toLowerCase().trim()
-              return normalizedColor.includes(normalizedFilter) || normalizedFilter.includes(normalizedColor)
-            })
-            if (matchesColor) return true
-          }
-          // Match against tags
-          if (artwork.tags && Array.isArray(artwork.tags)) {
-            const matchesTag = artwork.tags.some(tag => {
-              const normalizedTag = tag.toLowerCase().trim()
-              return normalizedTag.includes(normalizedFilter) || normalizedFilter.includes(normalizedTag)
-            })
-            if (matchesTag) return true
-          }
-          // Match against category and title
-          const searchText = `${artwork.category || ''} ${artwork.title || ''} ${artwork.productType || ''}`.toLowerCase()
-          if (searchText.includes(normalizedFilter)) return true
-          return false
-        })
+        return selectedColorFilters.some(colorFilter => matchesColorFilter(artwork, colorFilter))
       })
     }
 

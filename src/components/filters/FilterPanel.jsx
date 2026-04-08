@@ -112,17 +112,21 @@ export function DesktopFilterPanel() {
 
       {/* Color */}
       <FilterSection title="Color" sectionKey="color">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {colorOptions.map((color) => (
             <button
               key={color.value}
               onClick={() => toggleFilter('color', color.value)}
-              className={`flex flex-col items-center gap-1.5 px-2 py-2.5 border-2 transition-all cursor-pointer ${
-                selectedColorFilters.includes(color.value) ? 'border-black bg-black text-white' : 'border-gray-300 hover:border-gray-400'
+              aria-label={color.name}
+              title={color.name}
+              className={`aspect-square p-1 border-2 transition-all cursor-pointer bg-white ${
+                selectedColorFilters.includes(color.value)
+                  ? 'border-black ring-2 ring-black ring-offset-2'
+                  : 'border-gray-300 hover:border-gray-400'
               }`}
             >
-              <div className="w-7 h-7 border border-gray-300" style={{ background: color.color }} />
-              <span className={`text-xs font-medium text-center leading-tight ${selectedColorFilters.includes(color.value) ? 'text-white' : 'text-gray-800'}`}>{color.name}</span>
+              <div className="w-full h-full border border-gray-300" style={{ background: color.color }} />
+              <span className="sr-only">{color.name}</span>
             </button>
           ))}
         </div>
@@ -288,17 +292,21 @@ export function MobileFilterPanel() {
 
         {/* Color */}
         <FilterSection title="Color" sectionKey="color" isMobile>
-          <div className="space-y-1">
+          <div className="grid grid-cols-4 gap-1.5">
             {colorOptions.map((color) => (
               <button
                 key={color.value}
                 onClick={() => toggleFilter('color', color.value)}
-                className={`flex items-center gap-2 w-full px-2 py-1.5 border transition-all ${
-                  selectedColorFilters.includes(color.value) ? 'border-black bg-gray-100' : 'border-gray-200 hover:border-gray-300'
+                aria-label={color.name}
+                title={color.name}
+                className={`aspect-square p-0.5 border transition-all bg-white ${
+                  selectedColorFilters.includes(color.value)
+                    ? 'border-black ring-2 ring-black ring-offset-1'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className="w-4 h-4 border border-gray-300 flex-shrink-0" style={{ background: color.color }} />
-                <span className="text-[9px] font-medium text-gray-800">{color.name}</span>
+                <div className="w-full h-full border border-gray-300" style={{ background: color.color }} />
+                <span className="sr-only">{color.name}</span>
               </button>
             ))}
           </div>

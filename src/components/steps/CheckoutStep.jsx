@@ -636,16 +636,15 @@ const PRINT_SIZES = {
                                     </svg>
                                   </div>
                                 )}
-                                {/* Duplicate button - appears on hover */}
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     duplicateFrame(idx)
                                   }}
-                                  className="absolute bottom-1 right-1 w-6 h-6 bg-white/95 hover:bg-[#4a6741] rounded-full flex items-center justify-center shadow-lg z-10 opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer hover:scale-110 border border-gray-200 hover:border-[#4a6741]"
+                                  className="absolute bottom-1 right-1 w-6 h-6 bg-[#4a6741]/90 hover:bg-[#3d5636] rounded-full flex items-center justify-center shadow-lg z-10 opacity-100 transition-all duration-200 cursor-pointer hover:scale-110 border border-[#4a6741]"
                                   title="Duplicate frame"
                                 >
-                                  <svg className="w-3.5 h-3.5 text-gray-500 group-hover:text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                  <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                   </svg>
                                 </button>

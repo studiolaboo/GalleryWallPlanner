@@ -693,23 +693,10 @@ export function GalleryProvider({ children }) {
     if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
       wasDraggingRef.current = true
     }
-    const totalX = groupOffset.x + deltaX
-    const totalY = groupOffset.y + deltaY
-    const elasticFactor = 0.3
-    if (totalX > DRAG_BOUNDARY.right) {
-      const overflow = totalX - DRAG_BOUNDARY.right
-      deltaX = DRAG_BOUNDARY.right - groupOffset.x + (overflow * elasticFactor)
-    } else if (totalX < -DRAG_BOUNDARY.left) {
-      const overflow = -DRAG_BOUNDARY.left - totalX
-      deltaX = -DRAG_BOUNDARY.left - groupOffset.x - (overflow * elasticFactor)
-    }
-    if (totalY > DRAG_BOUNDARY.bottom) {
-      const overflow = totalY - DRAG_BOUNDARY.bottom
-      deltaY = DRAG_BOUNDARY.bottom - groupOffset.y + (overflow * elasticFactor)
-    } else if (totalY < -DRAG_BOUNDARY.top) {
-      const overflow = -DRAG_BOUNDARY.top - totalY
-      deltaY = -DRAG_BOUNDARY.top - groupOffset.y - (overflow * elasticFactor)
-    }
+    const totalX = Math.max(-DRAG_BOUNDARY.left, Math.min(DRAG_BOUNDARY.right, groupOffset.x + deltaX))
+    const totalY = Math.max(-DRAG_BOUNDARY.top, Math.min(DRAG_BOUNDARY.bottom, groupOffset.y + deltaY))
+    deltaX = totalX - groupOffset.x
+    deltaY = totalY - groupOffset.y
     setDragOffset({ x: deltaX, y: deltaY })
   }, [isDragging, dragStart, groupOffset])
 

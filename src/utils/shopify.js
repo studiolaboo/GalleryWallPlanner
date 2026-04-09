@@ -16,7 +16,7 @@ export async function fetchArtworkProducts() {
   let cursor = null
   
   try {
-    while (hasNextPage && allProducts.length < 2000) {
+    while (hasNextPage && allProducts.length < 5000) {
       const query = `
         {
           products(first: 250${cursor ? `, after: "${cursor}"` : ''}) {

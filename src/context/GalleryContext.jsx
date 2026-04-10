@@ -812,25 +812,69 @@ export function GalleryProvider({ children }) {
     const sizeToClone = perFrameSizes[frameIdx] || printSize
     const offsetToClone = individualOffsets[frameIdx] || { x: 0, y: 0 }
     
-    // Find all frames that share the same base position (same layout position)
-    // These are frames that were duplicated from the same source
-    const samePositionFrames = selectedLayout.frames
-      .map((frame, idx) => ({
-        frame,
-        idx,
-        offset: individualOffsets[idx] || { x: 0, y: 0 }
-      }))
-      .filter(item => 
-        item.frame.left === frameToClone.left && 
-        item.frame.top === frameToClone.top
-      )
-    
-    // Find the rightmost frame among those with the same base position
-    const rightmostOffset = Math.max(...samePositionFrames.map(item => item.offset.x))
-    
-    // Calculate the new offset position
-    const frameWidthOffset = 240 // Frame width + gap (increased for better spacing)
-    const newXOffset = rightmostOffset + frameWidthOffset
+    // Derive duplicate spacing from original layout (same-row nearest neighbor)
+    const toNumber = (value) => {
+      if (typeof value === 'number') return value
+      const n = parseFloat(String(value).replace('%', ''))
+      return Number.isFinite(n) ? n : 0
+    }
+
+    const sourceLeft = toNumber(frameToClone.left)
+    const sourceTop = toNumber(frameToClone.top)
+    const sourceWidth = Math.max(1, toNumber(frameToClone.width))
+
+    // Use only unique base positions (ignore already-duplicated same-position frames)
+    const baseFrames = selectedLayout.frames.filter((frame, idx, arr) =>
+      arr.findIndex(f => f.left === frame.left && f.top === frame.top) === idx
+    )
+
+    const sameRowFrames = baseFrames
+      .filter(frame => Math.abs(toNumber(frame.top) - sourceTop) <= 3)
+      .sort((a, b) => toNumber(a.left) - toNumber(b.left))
+
+    const nearestRight = sameRowFrames.find(frame => toNumber(frame.left) > sourceLeft)
+    const nearestLeft = [...sameRowFrames].reverse().find(frame => toNumber(frame.left) < sourceLeft)
+
+    let stepPercent = 0
+    if (nearestRight) {
+      stepPercent = toNumber(nearestRight.left) - sourceLeft
+    } else if (nearestLeft) {
+      stepPercent = sourceLeft - toNumber(nearestLeft.left)
+    }
+
+    // Fallback when there is no horizontal neighbor in the original layout
+    if (!Number.isFinite(stepPercent) || stepPercent <= 0) {
+      stepPercent = sourceWidth + 3
+    }
+
+    const canvasRect = canvasRef.current?.getBoundingClientRect?.()
+    const canvasWidth = canvasRect?.width || 1400
+    const canvasHeight = canvasRect?.height || 900
+    const spacingStepPx = Math.max(120, Math.round((canvasWidth * stepPercent) / 100))
+
+    // Always append duplicates to the right end of the current visual row
+    const sourceBaseLeftPx = (canvasWidth * sourceLeft) / 100
+    const sourceBaseTopPx = (canvasHeight * sourceTop) / 100
+    const rowTolerancePx = Math.max(24, canvasHeight * 0.03)
+
+    const rowFrames = selectedLayout.frames
+      .map((frame, idx) => {
+        const baseLeftPx = (canvasWidth * toNumber(frame.left)) / 100
+        const baseTopPx = (canvasHeight * toNumber(frame.top)) / 100
+        const offset = individualOffsets[idx] || { x: 0, y: 0 }
+        return {
+          effectiveLeftPx: baseLeftPx + offset.x,
+          effectiveTopPx: baseTopPx + offset.y,
+        }
+      })
+      .filter(item => Math.abs(item.effectiveTopPx - (sourceBaseTopPx + offsetToClone.y)) <= rowTolerancePx)
+
+    const rightmostInRowPx = rowFrames.length > 0
+      ? Math.max(...rowFrames.map(item => item.effectiveLeftPx))
+      : (sourceBaseLeftPx + offsetToClone.x)
+
+    const targetLeftPx = rightmostInRowPx + spacingStepPx
+    const newXOffset = Math.round(targetLeftPx - sourceBaseLeftPx)
     
     // Check if the new frame would go off-screen (canvas is roughly 1400px wide, frames are ~180px)
     // Keep a 200px margin from the right edge

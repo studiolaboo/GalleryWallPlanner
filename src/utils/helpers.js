@@ -301,10 +301,9 @@ export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrien
   const spacingCm    = measurementUnit === 'in' ? spacingValue * 2.54 : spacingValue
   const spacingGap_w = spacingCm * CM_SCALE   // user gap in width-% space
 
-  // ---------- Pass 1b: spread frames from their original layout centres ----------
-  // Uses a fixed 1 cm base gap just to ensure frames have correct relative positions
-  // before Pass 2b applies the actual user-controlled spacing.
-  const targetGap  = 1 * CM_SCALE  // fixed ~1 cm minimum spread; user spacing is in Pass 2b
+  // ---------- Pass 1b: spread/compress frames from their original layout centres ----------
+  // Use the selected spacing directly so default Tight (2cm) is respected.
+  const targetGap  = spacingGap_w
   if (raw.length > 1) {
     const gcx = raw.reduce((s, r) => s + r.cx, 0) / raw.length
     const gcy = raw.reduce((s, r) => s + r.cy, 0) / raw.length
@@ -377,8 +376,8 @@ export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrien
   //       → push these two frames horizontally only.
   //   • Diagonal pair (neither axis dominates)
   //       → skip entirely (preserves step / triangle / pyramid layouts).
-  const LABEL_PAD  = 2.5 + spacingGap_w  // vertical clearance: 2.5% fixed label min + user spacing
-  const HORIZ_GAP  = 1.5 + spacingGap_w  // horizontal clearance: 1.5% fixed min + user spacing
+  const LABEL_PAD  = spacingGap_w
+  const HORIZ_GAP  = spacingGap_w
   const AXIS_RATIO = 2.0   // dominance threshold: catches grid rows (≈2.5) but skips triangle apex (≈1.96)
 
   // Pre-compute original centres for axis classification
@@ -473,8 +472,8 @@ export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrien
           // Rectangle "reach" in direction (nx, ny): hw·|nx| + hh·|ny|
           const rA = a.hw * Math.abs(nx) + a.hh * Math.abs(ny)
           const rB = b.hw * Math.abs(nx) + b.hh * Math.abs(ny)
-          // Gap = user spacing + proportional label clearance for the vertical component
-          const need = rA + rB + spacingGap_w + 2.5 * Math.abs(ny)
+          // Gap = selected spacing along diagonal direction
+          const need = rA + rB + spacingGap_w
           const ov   = need - dist
           if (ov > 0) {
             const push = ov / 2

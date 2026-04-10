@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, useRef, useCallback, us
 import { fetchArtworkProducts, createCheckout } from '../utils/shopify'
 import { useMobileDetection, useFullscreen } from '../hooks'
 import { portraitLayoutOptions, placeCategories, roomImages } from '../data'
-import { getVariantForSize, getVariantPrice } from '../utils/helpers'
+import { getDynamicFrames, getVariantForSize, getVariantPrice } from '../utils/helpers'
 
 const DEFAULT_LAYOUT = portraitLayoutOptions[0] // Single Portrait
 
@@ -812,68 +812,97 @@ export function GalleryProvider({ children }) {
     const sizeToClone = perFrameSizes[frameIdx] || printSize
     const offsetToClone = individualOffsets[frameIdx] || { x: 0, y: 0 }
     
-    // Derive duplicate spacing from original layout (same-row nearest neighbor)
+    const canvasRect = canvasRef.current?.getBoundingClientRect?.()
+    const canvasWidth = canvasRect?.width || 1400
+    const canvasHeight = canvasRect?.height || 900
+
     const toNumber = (value) => {
       if (typeof value === 'number') return value
       const n = parseFloat(String(value).replace('%', ''))
       return Number.isFinite(n) ? n : 0
     }
 
-    const sourceLeft = toNumber(frameToClone.left)
-    const sourceTop = toNumber(frameToClone.top)
-    const sourceWidth = Math.max(1, toNumber(frameToClone.width))
+    // Build a de-duplicated version of the current layout so we can read the
+    // original row geometry even after duplicates have already been added.
+    const uniqueFrames = []
+    const uniqueSizeValues = []
+    const uniqueSourceIndices = []
+    selectedLayout.frames.forEach((frame, idx) => {
+      const isFirstInstance = uniqueFrames.findIndex(f => f.left === frame.left && f.top === frame.top) === -1
+      if (isFirstInstance) {
+        uniqueFrames.push(frame)
+        uniqueSizeValues.push(perFrameSizes[idx] || printSize)
+        uniqueSourceIndices.push(idx)
+      }
+    })
 
-    // Use only unique base positions (ignore already-duplicated same-position frames)
-    const baseFrames = selectedLayout.frames.filter((frame, idx, arr) =>
-      arr.findIndex(f => f.left === frame.left && f.top === frame.top) === idx
-    )
+    const uniqueDynamicFrames = getDynamicFrames(
+      uniqueFrames,
+      uniqueSizeValues,
+      measurementUnit,
+      printOrientation,
+      wallScale,
+      spacingValue
+    ) || []
 
-    const sameRowFrames = baseFrames
-      .filter(frame => Math.abs(toNumber(frame.top) - sourceTop) <= 3)
-      .sort((a, b) => toNumber(a.left) - toNumber(b.left))
+    const sourceUniqueIndex = uniqueFrames.findIndex(frame => frame.left === frameToClone.left && frame.top === frameToClone.top)
+    const sourceBaseDynamic = sourceUniqueIndex >= 0 ? uniqueDynamicFrames[sourceUniqueIndex] : null
 
-    const nearestRight = sameRowFrames.find(frame => toNumber(frame.left) > sourceLeft)
-    const nearestLeft = [...sameRowFrames].reverse().find(frame => toNumber(frame.left) < sourceLeft)
+    const sourceBaseCenterX = sourceBaseDynamic?.centerX ?? toNumber(frameToClone.left) + (toNumber(frameToClone.width) / 2)
+    const sourceBaseCenterY = sourceBaseDynamic?.centerY ?? toNumber(frameToClone.top) + (toNumber(frameToClone.height) / 2)
+    const sourceBaseWidthPct = sourceBaseDynamic ? toNumber(sourceBaseDynamic.width) : toNumber(frameToClone.width)
+    const sourceBaseHeightPct = sourceBaseDynamic ? toNumber(sourceBaseDynamic.height) : toNumber(frameToClone.height)
 
-    let stepPercent = 0
-    if (nearestRight) {
-      stepPercent = toNumber(nearestRight.left) - sourceLeft
-    } else if (nearestLeft) {
-      stepPercent = sourceLeft - toNumber(nearestLeft.left)
-    }
-
-    // Fallback when there is no horizontal neighbor in the original layout
-    if (!Number.isFinite(stepPercent) || stepPercent <= 0) {
-      stepPercent = sourceWidth + 3
-    }
-
-    const canvasRect = canvasRef.current?.getBoundingClientRect?.()
-    const canvasWidth = canvasRect?.width || 1400
-    const canvasHeight = canvasRect?.height || 900
-    const spacingStepPx = Math.max(120, Math.round((canvasWidth * stepPercent) / 100))
-
-    // Always append duplicates to the right end of the current visual row
-    const sourceBaseLeftPx = (canvasWidth * sourceLeft) / 100
-    const sourceBaseTopPx = (canvasHeight * sourceTop) / 100
+    const sourceBaseLeftPx = ((sourceBaseCenterX - (sourceBaseWidthPct / 2)) / 100) * canvasWidth
+    const sourceBaseTopPx = ((sourceBaseCenterY - (sourceBaseHeightPct / 2)) / 100) * canvasHeight
     const rowTolerancePx = Math.max(24, canvasHeight * 0.03)
 
-    const rowFrames = selectedLayout.frames
+    // Measure the original row spacing from the de-duplicated geometry.
+    const sourceRow = uniqueDynamicFrames
       .map((frame, idx) => {
-        const baseLeftPx = (canvasWidth * toNumber(frame.left)) / 100
-        const baseTopPx = (canvasHeight * toNumber(frame.top)) / 100
+        const leftPx = ((frame.centerX - (toNumber(frame.width) / 2)) / 100) * canvasWidth
+        const topPx = ((frame.centerY - (toNumber(frame.height) / 2)) / 100) * canvasHeight
+        return { idx, leftPx, rightPx: leftPx + (toNumber(frame.width) / 100) * canvasWidth, topPx }
+      })
+      .filter(item => Math.abs(item.topPx - sourceBaseTopPx) <= rowTolerancePx)
+      .sort((a, b) => a.leftPx - b.leftPx)
+
+    const rowGapsPx = sourceRow
+      .map((item, idx, arr) => idx === 0 ? null : item.leftPx - arr[idx - 1].rightPx)
+      .filter(gap => Number.isFinite(gap) && gap > 0)
+
+    const spacingGapPx = rowGapsPx.length > 0
+      ? rowGapsPx.reduce((sum, gap) => sum + gap, 0) / rowGapsPx.length
+      : Math.max(24, Math.round((toNumber(frameToClone.width) / 100) * canvasWidth * 0.2))
+
+    // Always append duplicates to the right end of the current visual row.
+    // Use the visible row geometry (including any existing duplicates) so the
+    // new item lands after the rightmost box with the original gap preserved.
+    const currentRowFrames = selectedLayout.frames
+      .map((frame, idx) => {
+        const dyn = uniqueFrames.findIndex(f => f.left === frame.left && f.top === frame.top)
+        const dynamicFrame = dyn >= 0 ? uniqueDynamicFrames[dyn] : null
+        const baseLeftPx = dynamicFrame
+          ? ((dynamicFrame.centerX - (toNumber(dynamicFrame.width) / 2)) / 100) * canvasWidth
+          : ((toNumber(frame.left) + (toNumber(frame.width) / 2) - (toNumber(frame.width) / 2)) / 100) * canvasWidth
+        const baseTopPx = dynamicFrame
+          ? ((dynamicFrame.centerY - (toNumber(dynamicFrame.height) / 2)) / 100) * canvasHeight
+          : ((toNumber(frame.top)) / 100) * canvasHeight
         const offset = individualOffsets[idx] || { x: 0, y: 0 }
+        const widthPx = dynamicFrame ? (toNumber(dynamicFrame.width) / 100) * canvasWidth : (toNumber(frame.width) / 100) * canvasWidth
         return {
           effectiveLeftPx: baseLeftPx + offset.x,
+          effectiveRightPx: baseLeftPx + offset.x + widthPx,
           effectiveTopPx: baseTopPx + offset.y,
         }
       })
       .filter(item => Math.abs(item.effectiveTopPx - (sourceBaseTopPx + offsetToClone.y)) <= rowTolerancePx)
 
-    const rightmostInRowPx = rowFrames.length > 0
-      ? Math.max(...rowFrames.map(item => item.effectiveLeftPx))
-      : (sourceBaseLeftPx + offsetToClone.x)
+    const rightmostInRowPx = currentRowFrames.length > 0
+      ? Math.max(...currentRowFrames.map(item => item.effectiveRightPx))
+      : (sourceBaseLeftPx + offsetToClone.x + ((sourceBaseWidthPct / 100) * canvasWidth))
 
-    const targetLeftPx = rightmostInRowPx + spacingStepPx
+    const targetLeftPx = rightmostInRowPx + spacingGapPx
     const newXOffset = Math.round(targetLeftPx - sourceBaseLeftPx)
     
     // Check if the new frame would go off-screen (canvas is roughly 1400px wide, frames are ~180px)

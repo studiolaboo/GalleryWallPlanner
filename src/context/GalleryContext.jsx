@@ -667,11 +667,26 @@ export function GalleryProvider({ children }) {
 
   // ===== DRAG HANDLERS =====
 
-  const DRAG_BOUNDARY = {
-    left: 250,
-    right: 250,
-    top: 50,
-    bottom: 200
+  const getDragBoundary = () => {
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (!rect) {
+      return {
+        left: 250,
+        right: 250,
+        top: 200,
+        bottom: 200
+      }
+    }
+
+    const horizontalLimit = Math.max(250, Math.floor(rect.width / 2) - 20)
+    const verticalLimit = Math.max(200, Math.floor(rect.height / 2) - 20)
+
+    return {
+      left: horizontalLimit,
+      right: horizontalLimit,
+      top: verticalLimit,
+      bottom: verticalLimit
+    }
   }
 
   const handleDragStart = (e) => {
@@ -686,6 +701,7 @@ export function GalleryProvider({ children }) {
 
   const handleDragMove = useCallback((e) => {
     if (!isDragging) return
+    const dragBoundary = getDragBoundary()
     const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX
     const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY
     let deltaX = clientX - dragStart.x
@@ -693,8 +709,8 @@ export function GalleryProvider({ children }) {
     if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
       wasDraggingRef.current = true
     }
-    const totalX = Math.max(-DRAG_BOUNDARY.left, Math.min(DRAG_BOUNDARY.right, groupOffset.x + deltaX))
-    const totalY = Math.max(-DRAG_BOUNDARY.top, Math.min(DRAG_BOUNDARY.bottom, groupOffset.y + deltaY))
+    const totalX = Math.max(-dragBoundary.left, Math.min(dragBoundary.right, groupOffset.x + deltaX))
+    const totalY = Math.max(-dragBoundary.top, Math.min(dragBoundary.bottom, groupOffset.y + deltaY))
     deltaX = totalX - groupOffset.x
     deltaY = totalY - groupOffset.y
     setDragOffset({ x: deltaX, y: deltaY })
@@ -704,10 +720,11 @@ export function GalleryProvider({ children }) {
 
   const handleDragEnd = useCallback(() => {
     if (!isDragging) return
+    const dragBoundary = getDragBoundary()
     let finalX = groupOffset.x + dragOffset.x
     let finalY = groupOffset.y + dragOffset.y
-    finalX = Math.max(-DRAG_BOUNDARY.left, Math.min(DRAG_BOUNDARY.right, finalX))
-    finalY = Math.max(-DRAG_BOUNDARY.top, Math.min(DRAG_BOUNDARY.bottom, finalY))
+    finalX = Math.max(-dragBoundary.left, Math.min(dragBoundary.right, finalX))
+    finalY = Math.max(-dragBoundary.top, Math.min(dragBoundary.bottom, finalY))
     if (showGrid) {
       finalX = Math.round(finalX / GRID_SNAP_PX) * GRID_SNAP_PX
       finalY = Math.round(finalY / GRID_SNAP_PX) * GRID_SNAP_PX

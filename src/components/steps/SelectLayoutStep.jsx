@@ -81,7 +81,7 @@ export default function SelectLayoutStep() {
     perFrameSizes, setPerFrameSizes,
     spacingPreset, setSpacingPreset,
     spacingValue, setSpacingValue,
-    innerShadow, setInnerShadow,
+    innerShadow,
     wallScale, setWallScale,
     showGrid, setShowGrid,
     showRuler, setShowRuler,
@@ -179,13 +179,13 @@ export default function SelectLayoutStep() {
     setSpacingValue(measurementUnit === 'cm' ? preset.cm : preset.inch)
   }
 
-  const handleShadowChange = useCallback((key, value) => {
-    setInnerShadow(prev => ({ ...prev, [key]: value }))
-  }, [setInnerShadow])
+  // const handleShadowChange = useCallback((key, value) => {
+  //   setInnerShadow(prev => ({ ...prev, [key]: value }))
+  // }, [setInnerShadow])
 
-  const resetShadow = () => {
-    setInnerShadow({ xOffset: 0, yOffset: 2, blur: 10, spread: 0, opacity: 20 })
-  }
+  // const resetShadow = () => {
+  //   setInnerShadow({ xOffset: 0, yOffset: 2, blur: 10, spread: 0, opacity: 20 })
+  // }
 
   const innerShadowCSS = `inset ${innerShadow.xOffset}px ${innerShadow.yOffset}px ${innerShadow.blur}px ${innerShadow.spread}px rgba(0,0,0,${(innerShadow.opacity / 100).toFixed(1)})`
 
@@ -586,7 +586,7 @@ export default function SelectLayoutStep() {
                 />
               </div>
 
-              {/* ===== INNER SHADOW TUNING ===== */}
+              {/* ===== INNER SHADOW TUNING (HIDDEN FOR NOW) =====
               <div className="hidden lg:block pb-4 border-t border-gray-200 pt-6 mt-2">
                 <div className="flex items-center justify-between mb-1">
                   <div>
@@ -601,7 +601,6 @@ export default function SelectLayoutStep() {
                   </button>
                 </div>
 
-                {/* X OFFSET + Y OFFSET */}
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
@@ -629,7 +628,6 @@ export default function SelectLayoutStep() {
                   </div>
                 </div>
 
-                {/* BLUR RADIUS */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-[10px] font-bold tracking-widest text-gray-500">BLUR RADIUS</label>
@@ -643,7 +641,6 @@ export default function SelectLayoutStep() {
                   />
                 </div>
 
-                {/* SPREAD */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-[10px] font-bold tracking-widest text-gray-500">SPREAD</label>
@@ -657,7 +654,6 @@ export default function SelectLayoutStep() {
                   />
                 </div>
 
-                {/* OPACITY */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-[10px] font-bold tracking-widest text-gray-500">OPACITY</label>
@@ -671,12 +667,12 @@ export default function SelectLayoutStep() {
                   />
                 </div>
 
-                {/* Inner Shadow Code Display */}
                 <div className="mt-5 bg-gray-50 border border-gray-200 rounded-lg p-3">
                   <label className="text-[9px] font-bold tracking-widest text-gray-500 mb-1.5 block">INNER SHADOW CODE:</label>
                   <p className="text-[11px] text-gray-600 font-sans break-all">{innerShadowCSS}</p>
                 </div>
               </div>
+              */}
 
             </div>
 

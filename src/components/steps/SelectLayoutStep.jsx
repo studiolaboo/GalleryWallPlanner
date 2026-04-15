@@ -68,6 +68,7 @@ export default function SelectLayoutStep() {
     handleDragStart,
     wasDraggingRef,
     canvasRef,
+    canvasAspectRatio,
     selectedPlace,
     isLocked, setIsLocked,
     individualOffsets, activeDragFrameIdx, individualDragLive,
@@ -160,8 +161,8 @@ export default function SelectLayoutStep() {
 
   // Compute dynamically-sized frames when a print size is selected
   const dynamicFrames = useMemo(() =>
-    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue),
-    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue]
+    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio),
+    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio]
   )
 
   const handleLayoutSelect = (layout) => {

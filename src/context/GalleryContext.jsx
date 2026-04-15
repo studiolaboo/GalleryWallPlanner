@@ -115,6 +115,33 @@ export function GalleryProvider({ children }) {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const wasDraggingRef = useRef(false)
   const canvasRef = useRef(null)
+  const [canvasAspectRatio, setCanvasAspectRatio] = useState(1.6)
+
+  useEffect(() => {
+    const updateCanvasAspectRatio = () => {
+      const rect = canvasRef.current?.getBoundingClientRect?.()
+      if (!rect) return
+      const { width, height } = rect
+      if (width > 0 && height > 0) {
+        setCanvasAspectRatio(width / height)
+      }
+    }
+
+    const rafId = window.requestAnimationFrame(updateCanvasAspectRatio)
+    window.addEventListener('resize', updateCanvasAspectRatio)
+
+    let observer
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(updateCanvasAspectRatio)
+      if (canvasRef.current) observer.observe(canvasRef.current)
+    }
+
+    return () => {
+      window.cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', updateCanvasAspectRatio)
+      if (observer) observer.disconnect()
+    }
+  }, [canvasRef])
 
   // Lock / individual-drag state
   const [isLocked, setIsLocked] = useState(() => {
@@ -842,7 +869,8 @@ export function GalleryProvider({ children }) {
       measurementUnit,
       printOrientation,
       wallScale,
-      spacingValue
+      spacingValue,
+      canvasAspectRatio
     ) || []
 
     const sourceUniqueIndex = uniqueFrames.findIndex(frame => frame.left === frameToClone.left && frame.top === frameToClone.top)
@@ -1211,6 +1239,7 @@ export function GalleryProvider({ children }) {
     groupOffset, setGroupOffset,
     isDragging, dragOffset,
     wasDraggingRef, canvasRef,
+    canvasAspectRatio,
     handleDragStart,
     // Lock / individual drag
     isLocked, setIsLocked,

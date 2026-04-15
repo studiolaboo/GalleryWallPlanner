@@ -84,6 +84,7 @@ const getArtworkBgColor = (artwork) => {
     handleDragStart,
     wasDraggingRef,
     canvasRef,
+    canvasAspectRatio,
     isLocked, setIsLocked,
     individualOffsets, activeDragFrameIdx, individualDragLive,
     handleIndividualDragStart,
@@ -149,8 +150,8 @@ const getArtworkBgColor = (artwork) => {
 
   // Compute dynamically-sized frames when a print size is selected
   const dynamicFrames = useMemo(() =>
-    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue),
-    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue]
+    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio),
+    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio]
   )
 
   // Get available artworks for the currently active frame

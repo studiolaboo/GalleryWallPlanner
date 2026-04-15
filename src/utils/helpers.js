@@ -194,9 +194,10 @@ export const getFrameOrientation = (frame, printOrientation) => {
  * @param {string} measurementUnit  – "cm" | "in"
  * @param {string} printOrientation – "Portrait" | "Landscape" | "Square" | "Mix"
  * @param {number} wallScale        – slider value (default 50); sizes scale by wallScale/50
+ * @param {number} canvasAspectRatio – runtime canvas width/height ratio
  * @returns {Array} new frames array with computed width/height/top/left
  */
-export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrientation, wallScale = 50, spacingValue = 5) => {
+export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrientation, wallScale = 50, spacingValue = 5, canvasAspectRatio = 1.6) => {
   if (!printSizes || !frames || frames.length === 0) return frames
 
   // Normalise: string → same size for every frame; array → one size per frame
@@ -214,7 +215,9 @@ export const getDynamicFrames = (frames, printSizes, measurementUnit, printOrien
   // Canvas aspect ratio (width / height) — the canvas container is typically
   // ~1.6 : 1 landscape.  We need this to convert width-% to height-% so we
   // can check vertical overflow.
-  const CANVAS_AR = 1.6
+  const CANVAS_AR = Number.isFinite(canvasAspectRatio) && canvasAspectRatio > 0
+    ? canvasAspectRatio
+    : 1.6
 
   // Safe inset — frames must stay within this margin (%)
   const MARGIN = 2

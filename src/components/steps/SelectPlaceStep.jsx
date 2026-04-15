@@ -57,6 +57,7 @@ export default function SelectPlaceStep() {
     handleDragStart,
     wasDraggingRef,
     canvasRef,
+    canvasAspectRatio,
     isLocked, setIsLocked,
     individualOffsets, activeDragFrameIdx, individualDragLive,
     handleIndividualDragStart,
@@ -78,8 +79,8 @@ export default function SelectPlaceStep() {
 
   // Compute dynamically-sized frames when a print size is selected
   const dynamicFrames = useMemo(() =>
-    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue),
-    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue]
+    getDynamicFrames(selectedLayout?.frames, perFrameSizes.length > 0 ? perFrameSizes : printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio),
+    [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio]
   )
 
   const innerShadowCSS = `inset ${innerShadow.xOffset}px ${innerShadow.yOffset}px ${innerShadow.blur}px ${innerShadow.spread}px rgba(0,0,0,${(innerShadow.opacity / 100).toFixed(1)})`

@@ -57,6 +57,7 @@ const getArtworkBgColor = (artwork) => {
     selectedBackground,
     selectedArtworks, setSelectedArtworks,
     activeFrameIndex, setActiveFrameIndex,
+    isLoadingProducts,
     selectedFrames,
     showFilter, setShowFilter,
     searchQuery, setSearchQuery,
@@ -105,6 +106,8 @@ const getArtworkBgColor = (artwork) => {
     undo, redo, canUndo, canRedo,
     selectedPlace,
   } = useGallery()
+
+  const hasUserAdjustedArtworkFiltersRef = useRef(false)
 
   const [detailArtwork, setDetailArtwork] = useState(null)
   const [showEnlarge, setShowEnlarge] = useState(false)
@@ -243,6 +246,7 @@ const getArtworkBgColor = (artwork) => {
 
   // Clear all filters
   const handleClearFilters = () => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     setSearchQuery('')
     setSelectedColorFilters([])
     setSelectedStyleFilters([])
@@ -253,6 +257,7 @@ const getArtworkBgColor = (artwork) => {
 
   // Handle single-select filter dropdown changes
   const handleColorDropdown = (val) => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     if (val === 'All') {
       setSelectedColorFilters([])
     } else {
@@ -262,6 +267,7 @@ const getArtworkBgColor = (artwork) => {
   }
 
   const handleCategoryDropdown = (val) => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     if (val === 'All') {
       setSelectedCollectionFilters([])
     } else {
@@ -272,6 +278,7 @@ const getArtworkBgColor = (artwork) => {
   }
 
   const handleStyleDropdown = (val) => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     if (val === 'All') {
       setSelectedStyleFilters([])
     } else {
@@ -280,6 +287,7 @@ const getArtworkBgColor = (artwork) => {
   }
 
   const handleRoomDropdown = (val) => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     if (val === 'All') {
       setSelectedRoomFilters([])
     } else {
@@ -288,12 +296,20 @@ const getArtworkBgColor = (artwork) => {
   }
 
   const handleArtistDropdown = (val) => {
+    hasUserAdjustedArtworkFiltersRef.current = true
     if (val === 'All') {
       setSelectedArtistFilters([])
     } else {
       setSelectedArtistFilters([val])
     }
   }
+
+  useEffect(() => {
+    if (isLoadingProducts) return
+    if (selectedCollectionFilters.length === 0 && !hasUserAdjustedArtworkFiltersRef.current) {
+      setSelectedCollectionFilters(['botanical'])
+    }
+  }, [isLoadingProducts, selectedCollectionFilters.length, setSelectedCollectionFilters])
 
   useEffect(() => {
     if (!isCategoryMenuOpen) return
@@ -688,7 +704,24 @@ const getArtworkBgColor = (artwork) => {
                 </div>
               ) : (
                 <div>
-                  {availableArtworks.length === 0 ? (
+                  {isLoadingProducts ? (
+                    <div className="flex flex-col items-center justify-center py-14 lg:py-20 text-center font-sans">
+                      <div className="relative mb-4">
+                        <div className="h-14 w-14 rounded-full border-4 border-gray-200 border-t-[#4a6741] animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <svg className="h-5 w-5 text-[#4a6741]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0112.75-5.3M19.5 12A7.5 7.5 0 017.25 17.3" />
+                          </svg>
+                        </div>
+                      </div>
+                      <p className="text-sm lg:text-base font-semibold text-gray-700 tracking-wide font-sans">
+                        Curating artworks
+                      </p>
+                      <p className="mt-1 text-xs lg:text-sm text-gray-400 font-sans">
+                        We&apos;re gathering your artwork options — almost there.
+                      </p>
+                    </div>
+                  ) : availableArtworks.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-gray-400 text-sm">No artworks available</p>
                     </div>

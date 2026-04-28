@@ -50,9 +50,9 @@ export function BackgroundCanvas({ children, className = "" }) {
   const { selectedBackground, selectedPlace } = useGallery()
 
   const bgImage = selectedBackground 
-    ? `url(${selectedBackground.image})` 
+    ? `url("${selectedBackground.image}")` 
     : selectedPlace 
-      ? `url(${selectedPlace.image})`
+      ? `url("${selectedPlace.image}")`
       : "url(https://res.cloudinary.com/desenio/image/upload/w_1400/backgrounds/welcome-bg.jpg?v=1)"
 
   return (

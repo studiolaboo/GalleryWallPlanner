@@ -1010,9 +1010,9 @@ const getArtworkBgColor = (artwork) => {
                 className="flex-1 relative bg-cover bg-center overflow-hidden transition-all duration-500 rounded-2xl"
                 style={{
                   backgroundImage: selectedBackground
-                    ? `url(${selectedBackground.image})`
+                    ? `url("${selectedBackground.image}")`
                     : selectedPlace
-                      ? `url(${selectedPlace.image})`
+                      ? `url("${selectedPlace.image}")`
                       : "url(https://res.cloudinary.com/desenio/image/upload/w_1400/backgrounds/welcome-bg.jpg?v=1)",
                 }}
               >
@@ -1584,9 +1584,9 @@ const getArtworkBgColor = (artwork) => {
               className="relative w-full h-full max-h-full bg-cover bg-center rounded-2xl overflow-hidden shadow-2xl"
               style={{
                 backgroundImage: selectedBackground
-                  ? `url(${selectedBackground.image})`
+                  ? `url("${selectedBackground.image}")`
                   : selectedPlace
-                    ? `url(${selectedPlace.image})`
+                    ? `url("${selectedPlace.image}")`
                     : "url(https://res.cloudinary.com/desenio/image/upload/w_1400/backgrounds/welcome-bg.jpg?v=1)",
                 aspectRatio: `${enlargeCanvasAspectRatio}`,
                 maxWidth: '100%',

@@ -143,9 +143,9 @@ export default function SelectBackgroundStep() {
               className="flex-1 relative bg-cover bg-center transition-all duration-500"
               style={{
                 backgroundImage: selectedBackground 
-                  ? `url(${selectedBackground.image})` 
+                  ? `url("${selectedBackground.image}")` 
                   : selectedPlace 
-                    ? `url(${selectedPlace.image})`
+                    ? `url("${selectedPlace.image}")`
                     : "url(https://res.cloudinary.com/desenio/image/upload/w_1400/backgrounds/welcome-bg.jpg?v=1)",
               }}
             />

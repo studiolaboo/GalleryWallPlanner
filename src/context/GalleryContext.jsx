@@ -596,10 +596,14 @@ export function GalleryProvider({ children }) {
     return filtered
   }, [artworkProducts, searchQuery, selectedSizeFilters, selectedColorFilters, selectedOrientationFilters, selectedStyleFilters, selectedCollectionFilters, selectedArtistFilters, selectedRoomFilters])
 
-  // Filter artworks by the active frame's orientation so only matching
-  // products are shown (portrait frame → portrait products, etc.).
-  const getArtworksForFrameSize = (frameSize, frameOrientation) => {
-    if (!frameOrientation) return filteredArtworks
+  // Filter artworks by the selected print size and active frame orientation so
+  // only products with a matching variant are shown in step 3.
+  const getArtworksForFrameSize = (printSizeForArtwork, frameOrientation) => {
+    const sizeFiltered = printSizeForArtwork
+      ? filteredArtworks.filter(artwork => Boolean(getVariantForSize(artwork, printSizeForArtwork)))
+      : filteredArtworks
+
+    if (!frameOrientation) return sizeFiltered
 
     const orient = frameOrientation.toLowerCase() // "portrait" | "landscape" | "square"
 
@@ -610,7 +614,7 @@ export function GalleryProvider({ children }) {
         ? ['portrait', 'vertical']
         : ['square']
 
-    return filteredArtworks.filter(artwork => {
+    return sizeFiltered.filter(artwork => {
       const tags = artwork.tags
       if (!tags || !Array.isArray(tags) || tags.length === 0) return true
 

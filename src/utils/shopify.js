@@ -50,7 +50,7 @@ export async function fetchArtworkProducts() {
                     }
                   }
                 }
-                variants(first: 10) {
+                variants(first: 100) {
                   edges {
                     node {
                       id
@@ -661,7 +661,7 @@ export async function fetchProductByHandle(handle) {
             }
           }
         }
-        variants(first: 10) {
+        variants(first: 100) {
           edges {
             node {
               id

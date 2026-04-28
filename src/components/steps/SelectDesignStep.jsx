@@ -157,15 +157,15 @@ const getArtworkBgColor = (artwork) => {
     [selectedLayout, perFrameSizes, printSize, measurementUnit, printOrientation, wallScale, spacingValue, canvasAspectRatio]
   )
 
-  // Get available artworks for the currently active frame
-  const activeFrame = activeFrameIndex !== null && selectedLayout ? selectedLayout.frames[activeFrameIndex] : null
-  const activeFrameOrientation = activeFrame ? getFrameOrientation(activeFrame, printOrientation) : null
-  const availableArtworks = activeFrame ? getArtworksForFrameSize(activeFrame.size, activeFrameOrientation) : []
-
   // Resolve the print size for the currently active frame (used for variant price lookup)
   const activeFramePrintSize = activeFrameIndex !== null
     ? (perFrameSizes.length > 0 ? (perFrameSizes[activeFrameIndex] || printSize) : printSize)
     : printSize
+
+  // Get available artworks for the currently active frame and print size
+  const activeFrame = activeFrameIndex !== null && selectedLayout ? selectedLayout.frames[activeFrameIndex] : null
+  const activeFrameOrientation = activeFrame ? getFrameOrientation(activeFrame, printOrientation) : null
+  const availableArtworks = activeFrame ? getArtworksForFrameSize(activeFramePrintSize, activeFrameOrientation) : []
 
   // Auto-select frame 0 when entering the step (if nothing already active)
   useEffect(() => {
